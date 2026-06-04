@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${MIKRUS_APP_PORT:-20000}:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    mem_limit: 768m
+    memswap_limit: 768m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

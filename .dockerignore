@@ -1,0 +1,12 @@
+.venv
+.git
+.claude
+context
+__pycache__
+.env
+*.md
+.gitignore
+.agents
+.python-version
+idea.md
+skills-lock.json
