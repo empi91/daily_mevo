@@ -23,7 +23,9 @@ async def lifespan(app: FastAPI):
     pool = None
     if settings.database_url:
         dsn = settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
-        pool = await asyncpg.create_pool(dsn, min_size=2, max_size=5)
+        pool = await asyncpg.create_pool(
+            dsn, min_size=2, max_size=5, statement_cache_size=0
+        )
         app.state.db_pool = pool
     yield
     if pool:
