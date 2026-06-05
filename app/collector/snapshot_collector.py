@@ -50,9 +50,10 @@ async def collect_snapshots(pool: asyncpg.Pool, client: GBFSClient) -> int:
                 rows,
             )
 
+    duration_ms = (datetime.now(timezone.utc) - collected_at).total_seconds() * 1000
     logger.info(
-        "Snapshot collection completed: %d snapshots in %.1fms",
-        len(rows),
-        (datetime.now(timezone.utc) - collected_at).total_seconds() * 1000,
+        "Snapshot collection completed",
+        snapshot_count=len(rows),
+        duration_ms=round(duration_ms, 1),
     )
     return len(rows)

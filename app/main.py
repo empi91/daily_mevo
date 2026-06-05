@@ -106,13 +106,41 @@ app.add_middleware(RequestContextMiddleware)
 @app.get("/health")
 async def health() -> dict:
     db_status = "not_configured"
+    stations_count = 0
+    data_freshness: dict = {
+        "last_snapshot_at": None,
+        "age_seconds": None,
+        "threshold_seconds": settings.freshness_threshold_seconds,
+        "fresh": False,
+    }
+
     if hasattr(app.state, "db_pool") and app.state.db_pool:
         try:
             async with app.state.db_pool.acquire() as conn:
                 await conn.fetchval("SELECT 1")
-            db_status = "connected"
+                db_status = "connected"
+
+                stations_count = await conn.fetchval(
+                    "SELECT count(*) FROM stations WHERE is_active = TRUE"
+                )
+
+                last_snapshot_at = await conn.fetchval(
+                    "SELECT MAX(collected_at) FROM snapshots"
+                )
+                if last_snapshot_at is not None:
+                    now = datetime.now(timezone.utc)
+                    if last_snapshot_at.tzinfo is None:
+                        last_snapshot_at = last_snapshot_at.replace(tzinfo=timezone.utc)
+                    age_seconds = int((now - last_snapshot_at).total_seconds())
+                    data_freshness["last_snapshot_at"] = last_snapshot_at.isoformat()
+                    data_freshness["age_seconds"] = age_seconds
+                    data_freshness["fresh"] = (
+                        age_seconds <= settings.freshness_threshold_seconds
+                    )
         except Exception:
-            db_status = "disconnected"
+            if db_status != "connected":
+                db_status = "disconnected"
+            logger.warning("Health check DB query failed")
 
     collector: dict = {"enabled": settings.collector_enabled}
     if not settings.collector_enabled:
@@ -135,42 +163,9 @@ async def health() -> dict:
             else None
         )
 
-        if hasattr(app.state, "db_pool") and app.state.db_pool:
-            try:
-                async with app.state.db_pool.acquire() as conn:
-                    stations_count = await conn.fetchval(
-                        "SELECT count(*) FROM stations WHERE is_active = TRUE"
-                    )
-                    collector["stations_count"] = stations_count
-            except Exception:
-                collector["stations_count"] = 0
-        else:
-            collector["stations_count"] = 0
+        collector["stations_count"] = stations_count
 
-    data_freshness: dict = {
-        "last_snapshot_at": None,
-        "age_seconds": None,
-        "threshold_seconds": settings.freshness_threshold_seconds,
-        "fresh": False,
-    }
-    if hasattr(app.state, "db_pool") and app.state.db_pool:
-        try:
-            async with app.state.db_pool.acquire() as conn:
-                last_snapshot_at = await conn.fetchval(
-                    "SELECT MAX(collected_at) FROM snapshots"
-                )
-            if last_snapshot_at is not None:
-                now = datetime.now(timezone.utc)
-                if last_snapshot_at.tzinfo is None:
-                    last_snapshot_at = last_snapshot_at.replace(tzinfo=timezone.utc)
-                age_seconds = int((now - last_snapshot_at).total_seconds())
-                data_freshness["last_snapshot_at"] = last_snapshot_at.isoformat()
-                data_freshness["age_seconds"] = age_seconds
-                data_freshness["fresh"] = age_seconds <= settings.freshness_threshold_seconds
-        except Exception:
-            logger.warning("Failed to query snapshot freshness")
-
-    if not data_freshness["fresh"]:
+    if not data_freshness["fresh"] and data_freshness["last_snapshot_at"] is not None:
         logger.warning(
             "data_freshness_degraded",
             age_seconds=data_freshness["age_seconds"],
