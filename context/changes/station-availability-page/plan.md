@@ -530,50 +530,50 @@ Update the Docker build to include frontend compilation and configure FastAPI to
 
 #### Automated
 
-- [x] 2.1 `GET /api/v1/stations` returns JSON array
-- [x] 2.2 `GET /api/v1/stations/{valid_id}` returns station with availability
-- [x] 2.3 `GET /api/v1/stations/{invalid_id}` returns 404
-- [x] 2.4 `GET /api/v1/geocode?q=Gdańsk` returns lat/lon
-- [x] 2.5 `GET /api/v1/stations/nearby?lat=54.38&lon=18.59` returns nearest stations
-- [x] 2.6 Type checking passes: `uv run mypy .`
-- [x] 2.7 Linting passes: `uv run ruff check .`
+- [x] 2.1 `GET /api/v1/stations` returns JSON array — 8f2a316
+- [x] 2.2 `GET /api/v1/stations/{valid_id}` returns station with availability — 8f2a316
+- [x] 2.3 `GET /api/v1/stations/{invalid_id}` returns 404 — 8f2a316
+- [x] 2.4 `GET /api/v1/geocode?q=Gdańsk` returns lat/lon — 8f2a316
+- [x] 2.5 `GET /api/v1/stations/nearby?lat=54.38&lon=18.59` returns nearest stations — 8f2a316
+- [x] 2.6 Type checking passes: `uv run mypy .` — 8f2a316
+- [x] 2.7 Linting passes: `uv run ruff check .` — 8f2a316
 
 #### Manual
 
-- [x] 2.8 Station list returns all active stations with correct fields
-- [x] 2.9 Availability data matches `station_availability` table
-- [x] 2.10 Geocoding returns plausible coordinates for Tricity addresses
-- [x] 2.11 Nearby search returns sensible stations sorted by distance
+- [x] 2.8 Station list returns all active stations with correct fields — 8f2a316
+- [x] 2.9 Availability data matches `station_availability` table — 8f2a316
+- [x] 2.10 Geocoding returns plausible coordinates for Tricity addresses — 8f2a316
+- [x] 2.11 Nearby search returns sensible stations sorted by distance — 8f2a316
 
 ### Phase 3: Frontend — Scaffold React/Vite
 
 #### Automated
 
-- [ ] 3.1 `npm install` succeeds
-- [ ] 3.2 `npm run build` produces `dist/` with index.html
-- [ ] 3.3 `npm run dev` starts dev server
-- [ ] 3.4 TypeScript compiles without errors
+- [x] 3.1 `npm install` succeeds — 597748a
+- [x] 3.2 `npm run build` produces `dist/` with index.html — 597748a
+- [x] 3.3 `npm run dev` starts dev server — 597748a
+- [x] 3.4 TypeScript compiles without errors — 597748a
 
 #### Manual
 
-- [ ] 3.5 Dev server shows placeholder page at localhost:5173
-- [ ] 3.6 Navigation between routes works
-- [ ] 3.7 Tailwind classes render correctly
+- [x] 3.5 Dev server shows placeholder page at localhost:5173 — 597748a
+- [x] 3.6 Navigation between routes works — 597748a
+- [x] 3.7 Tailwind classes render correctly — 597748a
 
 ### Phase 4: Frontend — Homepage & Search
 
 #### Automated
 
-- [ ] 4.1 Frontend builds without errors: `npm run build`
-- [ ] 4.2 TypeScript compiles: `npm run typecheck`
+- [x] 4.1 Frontend builds without errors: `npm run build`
+- [x] 4.2 TypeScript compiles: `npm run typecheck`
 
 #### Manual
 
-- [ ] 4.3 Homepage loads with search bar and popular stations
-- [ ] 4.4 Station number search shows matching stations in real-time
-- [ ] 4.5 Address search shows nearest stations with distances
-- [ ] 4.6 Clicking a station navigates to detail page
-- [ ] 4.7 Layout is usable on mobile viewport (375px)
+- [x] 4.3 Homepage loads with search bar and popular stations
+- [x] 4.4 Station number search shows matching stations in real-time
+- [x] 4.5 Address search shows nearest stations with distances
+- [x] 4.6 Clicking a station navigates to detail page
+- [x] 4.7 Layout is usable on mobile viewport (375px)
 
 ### Phase 5: Frontend — Station Detail Page
 

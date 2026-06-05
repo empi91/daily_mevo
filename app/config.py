@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     min_sample_count: int = 8
     log_level: str = "INFO"
 
-    model_config = {"env_prefix": "MEVO_"}
+    model_config = {"env_prefix": "MEVO_", "env_file": ".env", "extra": "ignore"}
 
 
 settings = Settings()
