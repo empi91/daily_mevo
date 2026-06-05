@@ -29,5 +29,5 @@ warn_return_any = true
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["asyncpg"]
+module = ["asyncpg", "apscheduler.*"]
 ignore_missing_imports = true

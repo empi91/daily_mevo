@@ -11,8 +11,9 @@ COPY --from=builder /app/.venv /app/.venv
 COPY app/ app/
 COPY alembic/ alembic/
 COPY alembic.ini ./
+COPY scripts/entrypoint.sh ./
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 USER mevo
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+CMD ["./entrypoint.sh"]
