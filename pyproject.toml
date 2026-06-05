@@ -5,8 +5,28 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.16",
     "asyncpg>=0.30.0",
     "fastapi>=0.136.3",
+    "httpx>=0.28",
+    "apscheduler>=3.11,<4",
     "pydantic-settings>=2.9.1",
     "uvicorn>=0.48.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.26",
+    "ruff>=0.11",
+    "mypy>=1.15",
+]
+
+[tool.mypy]
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["asyncpg"]
+ignore_missing_imports = true

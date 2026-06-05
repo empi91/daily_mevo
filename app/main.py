@@ -1,35 +1,26 @@
+import logging
 from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 
-import asyncpg
 from fastapi import FastAPI
-from pydantic_settings import BaseSettings
 
+from app.config import settings
+from app.db import create_pool, close_pool
 
-class Settings(BaseSettings):
-    environment: str = "development"
-    app_version: str = "0.1.0"
-    database_url: str | None = None
-    supabase_url: str | None = None
-    supabase_anon_key: str | None = None
-
-    model_config = {"env_prefix": "MEVO_"}
-
-
-settings = Settings()
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    pool = None
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if settings.database_url:
-        dsn = settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
-        pool = await asyncpg.create_pool(
-            dsn, min_size=2, max_size=5, statement_cache_size=0
-        )
-        app.state.db_pool = pool
+        try:
+            app.state.db_pool = await create_pool(settings.database_url)
+        except Exception:
+            logger.exception("Failed to create database pool")
+            app.state.db_pool = None
     yield
-    if pool:
-        await pool.close()
+    if hasattr(app.state, "db_pool") and app.state.db_pool:
+        await close_pool(app.state.db_pool)
 
 
 app = FastAPI(
