@@ -32,7 +32,7 @@ Mevo bike commuters in Tricity (Gdańsk / Gdynia / Sopot) have no way to see his
 | F-01 | data-collection-pipeline  | (foundation) Schema + 5-min collector accumulating station data | —             | FR-001, FR-002                                    | done     |
 | F-02 | basic-observability       | (foundation) Structured logging + error tracking active         | —             | NFR §data-freshness, NFR §page-load               | done     |
 | F-03 | cicd-pipeline             | (foundation) GitHub Actions auto-deploy on merge                | —             | tech-stack §CI                                    | ready    |
-| S-01 | station-availability-page | Visitor sees station availability chart by day-of-week          | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004, FR-006, FR-007 | ready    |
+| S-01 | station-availability-page | Visitor sees station availability chart by day-of-week          | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004, FR-006, FR-007 | done     |
 | S-02 | user-auth                 | Visitor can register, log in, and log out                       | S-01, F-03    | FR-008, FR-009                                    | proposed |
 | S-03 | favourites-dashboard      | Registered user manages favourites on a personal dashboard      | S-01, S-02    | US-02, FR-010, FR-011, FR-012                     | proposed |
 
@@ -113,7 +113,7 @@ What's already in place in the codebase as of 2026-06-04 (auto-researched + user
   - Minimum snapshot threshold before showing a chart vs. "data still collecting" — Owner: user. Block: no.
   - Day-part hour boundaries (6–12 / 12–18 / 18–22 / 22–6 or different?) — Owner: user. Block: no.
 - **Risk:** Largest slice in the roadmap — includes frontend scaffold (React/Vite), API endpoints, aggregation logic, and chart rendering. Frontend is the unfamiliar layer for this developer. Sequenced as the north star because the product hypothesis lives or dies here.
-- **Status:** ready
+- **Status:** done
 
 ### S-02: User registration and login
 
@@ -146,7 +146,7 @@ What's already in place in the codebase as of 2026-06-04 (auto-researched + user
 | F-01       | data-collection-pipeline  | Set up Mevo station schema and 5-min data collector  | —                     | ✅ Implemented 2026-06-05                       |
 | F-02       | basic-observability       | Add structured logging and error tracking            | —                     | ✅ Implemented 2026-06-05                       |
 | F-03       | cicd-pipeline             | Set up GitHub Actions auto-deploy on merge           | yes                   | Planned for ~2026-06-09 per user               |
-| S-01       | station-availability-page | Station search and availability chart page           | yes                   | All prerequisites met, run `/10x-plan station-availability-page` |
+| S-01       | station-availability-page | Station search and availability chart page           | —                     | ✅ Implemented 2026-06-05                       |
 | S-02       | user-auth                 | User registration and login                          | no                    | Depends on S-01, F-03                          |
 | S-03       | favourites-dashboard      | Favourites and personal dashboard                    | no                    | Depends on S-01, S-02                          |
 
@@ -171,3 +171,4 @@ What's already in place in the codebase as of 2026-06-04 (auto-researched + user
 
 - **F-01: Data collection pipeline** — Schema + 5-min collector deployed 2026-06-05. 827 stations synced, snapshots collecting every 5 min. Commits: `fbb6edc`..`02c9726`.
 - **F-02: Basic observability** — Structured logging (structlog) and tracing (Logfire) deployed 2026-06-05. JSON logs in production, request correlation IDs, collector span tracing, health endpoint with data freshness monitoring. Commits: `b46230b`..`6cc54ae`.
+- **S-01: Station availability page** — North star feature deployed 2026-06-05. Full-stack: aggregation table + hourly job, REST API (stations, geocode, nearby), React/Vite frontend with heatmap, search (station number + address), station detail with day-part breakdown. Commits: `d805010`..`960efc3`.
