@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
@@ -62,8 +63,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             scheduler.start()
             app.state.scheduler = scheduler
 
-            await run_station_sync()
-            await run_snapshot_collection()
+            asyncio.create_task(run_station_sync())
+            asyncio.create_task(run_snapshot_collection())
 
         except Exception:
             logger.exception("Failed to start collector scheduler")
