@@ -80,8 +80,14 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             scheduler.start()
             app.state.scheduler = scheduler
 
-            asyncio.create_task(run_station_sync())
-            asyncio.create_task(run_snapshot_collection())
+            def _log_task_exception(t: asyncio.Task[None]) -> None:
+                if not t.cancelled() and t.exception():
+                    logger.error("Startup task failed", exc_info=t.exception())
+
+            sync_task = asyncio.create_task(run_station_sync())
+            sync_task.add_done_callback(_log_task_exception)
+            snapshot_task = asyncio.create_task(run_snapshot_collection())
+            snapshot_task.add_done_callback(_log_task_exception)
 
         except Exception:
             logger.exception("Failed to start collector scheduler")
@@ -140,7 +146,7 @@ async def health() -> dict:
         except Exception:
             if db_status != "connected":
                 db_status = "disconnected"
-            logger.warning("Health check DB query failed")
+            logger.warning("Health check DB query failed", exc_info=True)
 
     collector: dict = {"enabled": settings.collector_enabled}
     if not settings.collector_enabled:

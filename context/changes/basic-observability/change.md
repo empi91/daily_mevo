@@ -1,7 +1,7 @@
 ---
 id: basic-observability
 title: Basic Observability
-status: implemented
+status: impl_reviewed
 created: 2026-06-05
 updated: 2026-06-05
 roadmap_ref: F-02

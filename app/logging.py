@@ -20,7 +20,8 @@ def setup_logging() -> None:
         logfire_active = True
     except Exception:
         logging.getLogger(__name__).warning(
-            "Logfire configuration failed; continuing without Logfire"
+            "Logfire configuration failed; continuing without Logfire",
+            exc_info=True,
         )
 
     shared_processors: list[structlog.types.Processor] = [
