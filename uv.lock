@@ -287,7 +287,7 @@ requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "fastapi", specifier = ">=0.136.3" },
     { name = "httpx", specifier = ">=0.28" },
-    { name = "logfire", extras = ["fastapi"], specifier = ">=1.0" },
+    { name = "logfire", extras = ["fastapi"], specifier = ">=1.0,<3" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15" },
     { name = "psycopg2-binary", specifier = ">=2.9" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
@@ -520,7 +520,7 @@ wheels = [
 
 [[package]]
 name = "logfire"
-version = "4.35.0"
+version = "2.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "executing" },
@@ -531,9 +531,9 @@ dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7c/20/9508c92ad4ec2ed4ad63a20d72f08427c24117273541ec97c630332855c3/logfire-4.35.0.tar.gz", hash = "sha256:6542aa4ac5e2d2369587deab57a0d1bb9cf6da49634c8cd9c5dbd7c7581f3d51", size = 1148150, upload-time = "2026-06-02T14:55:56.792Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/83/a60f21785ee9588ecc63e3a499944ac40c459ebbe63d272b2702ac7d4668/logfire-2.11.1.tar.gz", hash = "sha256:d41de01fb47038cbd62007262aca7856c58b51e0e20340e878755438b3505241", size = 255935, upload-time = "2024-12-30T11:45:18.939Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/37/a3631d0b7e4fcb19df4705c7c7e17164c5446e144f034723cf6277749973/logfire-4.35.0-py3-none-any.whl", hash = "sha256:9ae5c3f2dd81144ccf1ec6dba1a5de84aff5b2e2b8dd2190e53e87e47bc63711", size = 347012, upload-time = "2026-06-02T14:55:53.244Z" },
+    { url = "https://files.pythonhosted.org/packages/79/01/6ac4c7a9ba19c46c959c6ddc50f55d41d597d8d82934de17cc7ea00dc233/logfire-2.11.1-py3-none-any.whl", hash = "sha256:f15affa6b4d18035a47774782d02505b8217097fe45230fdb86a8f4c703d2d65", size = 172859, upload-time = "2024-12-30T11:45:13.375Z" },
 ]
 
 [package.optional-dependencies]

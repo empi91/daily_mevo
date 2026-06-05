@@ -10,11 +10,18 @@ from app.config import settings
 def setup_logging() -> None:
     log_level = getattr(logging, settings.log_level.upper(), logging.INFO)
 
-    logfire.configure(
-        service_name="mevostats",
-        send_to_logfire="if-token-present",
-        console=False,
-    )
+    logfire_active = False
+    try:
+        logfire.configure(
+            service_name="mevostats",
+            send_to_logfire="if-token-present",
+            console=False,
+        )
+        logfire_active = True
+    except Exception:
+        logging.getLogger(__name__).warning(
+            "Logfire configuration failed; continuing without Logfire"
+        )
 
     shared_processors: list[structlog.types.Processor] = [
         structlog.contextvars.merge_contextvars,
@@ -23,8 +30,9 @@ def setup_logging() -> None:
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
-        logfire.StructlogProcessor(),
     ]
+    if logfire_active:
+        shared_processors.append(logfire.StructlogProcessor())
 
     if settings.environment == "development":
         renderer: structlog.types.Processor = structlog.dev.ConsoleRenderer()
