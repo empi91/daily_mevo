@@ -361,32 +361,32 @@ Update environment configuration, documentation, and deployment artifacts for th
 
 #### Automated
 
-- [x] 2.1 App starts and collector runs without errors
-- [x] 2.2 Type checking passes
-- [x] 2.3 Linting passes
-- [x] 2.4 Existing tests pass
+- [x] 2.1 App starts and collector runs without errors — c1c0007
+- [x] 2.2 Type checking passes — c1c0007
+- [x] 2.3 Linting passes — c1c0007
+- [x] 2.4 Existing tests pass — c1c0007
 
 #### Manual
 
-- [x] 2.5 Request logs include request_id, method, path, status_code, duration_ms
-- [x] 2.6 Response headers include X-Request-ID
-- [x] 2.7 Collector logs include job_name context
-- [ ] 2.8 Logfire dashboard shows spans (if token configured)
+- [x] 2.5 Request logs include request_id, method, path, status_code, duration_ms — c1c0007
+- [x] 2.6 Response headers include X-Request-ID — c1c0007
+- [x] 2.7 Collector logs include job_name context — c1c0007
+- [x] 2.8 Logfire dashboard shows spans (if token configured) — c1c0007
 
 ### Phase 3: Health Endpoint & Freshness Monitoring
 
 #### Automated
 
-- [ ] 3.1 App starts without errors
-- [ ] 3.2 Type checking passes
-- [ ] 3.3 Linting passes
-- [ ] 3.4 Existing tests pass
-- [ ] 3.5 Health endpoint returns data_freshness key
+- [x] 3.1 App starts without errors
+- [x] 3.2 Type checking passes
+- [x] 3.3 Linting passes
+- [x] 3.4 Existing tests pass
+- [x] 3.5 Health endpoint returns data_freshness key
 
 #### Manual
 
-- [ ] 3.6 Active collector shows fresh=true with small age_seconds
-- [ ] 3.7 Stale data triggers fresh=false and WARNING log
+- [x] 3.6 Active collector shows fresh=true with small age_seconds
+- [x] 3.7 Stale data triggers fresh=false and WARNING log
 
 ### Phase 4: Configuration & Deployment
 
