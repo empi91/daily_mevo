@@ -13,6 +13,8 @@ dependencies = [
     "apscheduler>=3.11,<4",
     "pydantic-settings>=2.9.1",
     "uvicorn>=0.48.0",
+    "structlog>=25.1",
+    "logfire[fastapi]>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -29,5 +31,5 @@ warn_return_any = true
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["asyncpg", "apscheduler.*"]
+module = ["asyncpg", "apscheduler.*", "logfire"]
 ignore_missing_imports = true

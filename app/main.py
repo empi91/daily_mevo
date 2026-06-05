@@ -1,15 +1,19 @@
 import asyncio
-import logging
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 from datetime import datetime, timezone
 
+import logfire
+import structlog
 from fastapi import FastAPI
 
 from app.config import settings
 from app.db import create_pool, close_pool
+from app.logging import setup_logging
 
-logger = logging.getLogger(__name__)
+setup_logging()
+
+logger = structlog.stdlib.get_logger()
 
 
 @asynccontextmanager
@@ -22,7 +26,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             app.state.db_pool = None
 
     scheduler = None
-    if settings.collector_enabled and hasattr(app.state, "db_pool") and app.state.db_pool:
+    if (
+        settings.collector_enabled
+        and hasattr(app.state, "db_pool")
+        and app.state.db_pool
+    ):
         try:
             from apscheduler.schedulers.asyncio import AsyncIOScheduler
             from app.collector import GBFSClient, sync_stations, collect_snapshots
@@ -82,6 +90,7 @@ app = FastAPI(
     version=settings.app_version,
     lifespan=lifespan,
 )
+logfire.instrument_fastapi(app)
 
 
 @app.get("/health")
@@ -111,7 +120,9 @@ async def health() -> dict:
 
         snapshot_job = sched.get_job("snapshot_collection")
         collector["next_run_at"] = (
-            snapshot_job.next_run_time.isoformat() if snapshot_job and snapshot_job.next_run_time else None
+            snapshot_job.next_run_time.isoformat()
+            if snapshot_job and snapshot_job.next_run_time
+            else None
         )
 
         if hasattr(app.state, "db_pool") and app.state.db_pool:
