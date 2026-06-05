@@ -564,33 +564,33 @@ Update the Docker build to include frontend compilation and configure FastAPI to
 
 #### Automated
 
-- [x] 4.1 Frontend builds without errors: `npm run build`
-- [x] 4.2 TypeScript compiles: `npm run typecheck`
+- [x] 4.1 Frontend builds without errors: `npm run build` — 23ff2c2
+- [x] 4.2 TypeScript compiles: `npm run typecheck` — 23ff2c2
 
 #### Manual
 
-- [x] 4.3 Homepage loads with search bar and popular stations
-- [x] 4.4 Station number search shows matching stations in real-time
-- [x] 4.5 Address search shows nearest stations with distances
-- [x] 4.6 Clicking a station navigates to detail page
-- [x] 4.7 Layout is usable on mobile viewport (375px)
+- [x] 4.3 Homepage loads with search bar and popular stations — 23ff2c2
+- [x] 4.4 Station number search shows matching stations in real-time — 23ff2c2
+- [x] 4.5 Address search shows nearest stations with distances — 23ff2c2
+- [x] 4.6 Clicking a station navigates to detail page — 23ff2c2
+- [x] 4.7 Layout is usable on mobile viewport (375px) — 23ff2c2
 
 ### Phase 5: Frontend — Station Detail Page
 
 #### Automated
 
-- [ ] 5.1 Frontend builds without errors: `npm run build`
-- [ ] 5.2 TypeScript compiles: `npm run typecheck`
+- [x] 5.1 Frontend builds without errors: `npm run build`
+- [x] 5.2 TypeScript compiles: `npm run typecheck`
 
 #### Manual
 
-- [ ] 5.3 Station detail page loads for valid station_id
-- [ ] 5.4 Heatmap renders with color-coded cells
-- [ ] 5.5 Day-of-week tabs and heatmap row selection work together
-- [ ] 5.6 Day-part sections expand/collapse correctly
-- [ ] 5.7 Station with no data shows "data still collecting" notice
-- [ ] 5.8 Invalid station_id shows 404 page
-- [ ] 5.9 Page is usable on mobile viewport (375px)
+- [x] 5.3 Station detail page loads for valid station_id
+- [x] 5.4 Heatmap renders with color-coded cells
+- [x] 5.5 Day-of-week tabs and heatmap row selection work together
+- [x] 5.6 Day-part sections expand/collapse correctly
+- [x] 5.7 Station with no data shows "data still collecting" notice
+- [x] 5.8 Invalid station_id shows 404 page
+- [x] 5.9 Page is usable on mobile viewport (375px)
 
 ### Phase 6: Deployment Integration
 
