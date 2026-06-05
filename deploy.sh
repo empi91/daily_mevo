@@ -18,10 +18,15 @@ ssh mikrus "cd ${APP_DIR} && docker compose build"
 echo "==> Restarting container..."
 ssh mikrus "cd ${APP_DIR} && docker compose up -d"
 
-echo "==> Waiting for health check..."
-sleep 10
-
-HEALTH=$(ssh mikrus "curl -sf http://localhost:20312/health" 2>/dev/null || echo "FAILED")
+echo "==> Waiting for health check (up to 90s)..."
+for i in $(seq 1 18); do
+    sleep 5
+    HEALTH=$(ssh mikrus "curl -sf http://localhost:20312/health" 2>/dev/null || echo "")
+    if echo "$HEALTH" | grep -q '"status":"ok"'; then
+        break
+    fi
+done
+HEALTH=${HEALTH:-FAILED}
 
 if echo "$HEALTH" | grep -q '"status":"ok"'; then
     echo "==> Deploy successful!"
