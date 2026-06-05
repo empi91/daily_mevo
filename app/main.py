@@ -35,6 +35,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         try:
             from apscheduler.schedulers.asyncio import AsyncIOScheduler
             from app.collector import GBFSClient, sync_stations, collect_snapshots
+            from app.aggregation import aggregate_availability
 
             gbfs_client = GBFSClient()
             pool = app.state.db_pool
@@ -42,27 +43,51 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             async def run_station_sync() -> None:
                 structlog.contextvars.clear_contextvars()
                 structlog.contextvars.bind_contextvars(job_name="station_sync")
-                with logfire.span("scheduled_job:{job_name}", job_name="station_sync") as span:
+                with logfire.span(
+                    "scheduled_job:{job_name}", job_name="station_sync"
+                ) as span:
                     try:
                         count = await sync_stations(pool, gbfs_client)
                         app.state.last_station_sync_at = datetime.now(timezone.utc)
                         span.set_attribute("result_count", count)
-                        logger.info("Scheduled station sync completed", station_count=count)
+                        logger.info(
+                            "Scheduled station sync completed", station_count=count
+                        )
                     except Exception:
                         logger.exception("Scheduled station sync failed")
 
             async def run_snapshot_collection() -> None:
                 structlog.contextvars.clear_contextvars()
                 structlog.contextvars.bind_contextvars(job_name="snapshot_collection")
-                with logfire.span("scheduled_job:{job_name}", job_name="snapshot_collection") as span:
+                with logfire.span(
+                    "scheduled_job:{job_name}", job_name="snapshot_collection"
+                ) as span:
                     try:
                         count = await collect_snapshots(pool, gbfs_client)
                         app.state.last_collected_at = datetime.now(timezone.utc)
                         app.state.last_snapshot_count = count
                         span.set_attribute("result_count", count)
-                        logger.info("Scheduled snapshot collection completed", snapshot_count=count)
+                        logger.info(
+                            "Scheduled snapshot collection completed",
+                            snapshot_count=count,
+                        )
                     except Exception:
                         logger.exception("Scheduled snapshot collection failed")
+
+            async def run_aggregation() -> None:
+                structlog.contextvars.clear_contextvars()
+                structlog.contextvars.bind_contextvars(job_name="aggregation")
+                with logfire.span(
+                    "scheduled_job:{job_name}", job_name="aggregation"
+                ) as span:
+                    try:
+                        count = await aggregate_availability(pool)
+                        span.set_attribute("result_count", count)
+                        logger.info(
+                            "Scheduled aggregation completed", rows_upserted=count
+                        )
+                    except Exception:
+                        logger.exception("Scheduled aggregation failed")
 
             scheduler = AsyncIOScheduler()
             scheduler.add_job(
@@ -76,6 +101,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                 "interval",
                 seconds=settings.collector_interval_seconds,
                 id="snapshot_collection",
+            )
+            scheduler.add_job(
+                run_aggregation,
+                "interval",
+                hours=1,
+                id="aggregation",
             )
             scheduler.start()
             app.state.scheduler = scheduler

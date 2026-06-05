@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     collector_enabled: bool = True
     collector_interval_seconds: int = 300
     freshness_threshold_seconds: int = 3600
+    reliability_threshold_reliable: int = 6
+    reliability_threshold_uncertain: int = 2
+    min_sample_count: int = 8
     log_level: str = "INFO"
 
     model_config = {"env_prefix": "MEVO_"}
