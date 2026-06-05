@@ -7,6 +7,7 @@ import logfire
 import structlog
 from fastapi import FastAPI
 
+from app.api import router as api_router
 from app.config import settings
 from app.db import create_pool, close_pool
 from app.logging import setup_logging
@@ -138,6 +139,7 @@ app = FastAPI(
 )
 logfire.instrument_fastapi(app)
 app.add_middleware(RequestContextMiddleware)
+app.include_router(api_router, prefix="/api/v1")
 
 
 @app.get("/health")

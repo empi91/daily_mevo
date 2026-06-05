@@ -515,35 +515,35 @@ Update the Docker build to include frontend compilation and configure FastAPI to
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `uv run alembic upgrade head`
-- [x] 1.2 Aggregation function runs without error on existing data
-- [x] 1.3 Type checking passes: `uv run mypy .`
-- [x] 1.4 Linting passes: `uv run ruff check .`
+- [x] 1.1 Migration applies cleanly: `uv run alembic upgrade head` — d805010
+- [x] 1.2 Aggregation function runs without error on existing data — d805010
+- [x] 1.3 Type checking passes: `uv run mypy .` — d805010
+- [x] 1.4 Linting passes: `uv run ruff check .` — d805010
 
 #### Manual
 
-- [x] 1.5 Query `station_availability` after aggregation — rows with plausible values
-- [x] 1.6 Scheduler logs show aggregation job completing hourly
-- [x] 1.7 Config thresholds are respected via env vars
+- [x] 1.5 Query `station_availability` after aggregation — rows with plausible values — d805010
+- [x] 1.6 Scheduler logs show aggregation job completing hourly — d805010
+- [x] 1.7 Config thresholds are respected via env vars — d805010
 
 ### Phase 2: Backend — API Endpoints
 
 #### Automated
 
-- [ ] 2.1 `GET /api/v1/stations` returns JSON array
-- [ ] 2.2 `GET /api/v1/stations/{valid_id}` returns station with availability
-- [ ] 2.3 `GET /api/v1/stations/{invalid_id}` returns 404
-- [ ] 2.4 `GET /api/v1/geocode?q=Gdańsk` returns lat/lon
-- [ ] 2.5 `GET /api/v1/stations/nearby?lat=54.38&lon=18.59` returns nearest stations
-- [ ] 2.6 Type checking passes: `uv run mypy .`
-- [ ] 2.7 Linting passes: `uv run ruff check .`
+- [x] 2.1 `GET /api/v1/stations` returns JSON array
+- [x] 2.2 `GET /api/v1/stations/{valid_id}` returns station with availability
+- [x] 2.3 `GET /api/v1/stations/{invalid_id}` returns 404
+- [x] 2.4 `GET /api/v1/geocode?q=Gdańsk` returns lat/lon
+- [x] 2.5 `GET /api/v1/stations/nearby?lat=54.38&lon=18.59` returns nearest stations
+- [x] 2.6 Type checking passes: `uv run mypy .`
+- [x] 2.7 Linting passes: `uv run ruff check .`
 
 #### Manual
 
-- [ ] 2.8 Station list returns all active stations with correct fields
-- [ ] 2.9 Availability data matches `station_availability` table
-- [ ] 2.10 Geocoding returns plausible coordinates for Tricity addresses
-- [ ] 2.11 Nearby search returns sensible stations sorted by distance
+- [x] 2.8 Station list returns all active stations with correct fields
+- [x] 2.9 Availability data matches `station_availability` table
+- [x] 2.10 Geocoding returns plausible coordinates for Tricity addresses
+- [x] 2.11 Nearby search returns sensible stations sorted by distance
 
 ### Phase 3: Frontend — Scaffold React/Vite
 
