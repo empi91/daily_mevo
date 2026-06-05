@@ -32,9 +32,7 @@ def upgrade() -> None:
     op.execute(
         "CREATE INDEX idx_snapshots_station_collected ON snapshots (station_id, collected_at)"
     )
-    op.execute(
-        "CREATE INDEX idx_snapshots_collected_at ON snapshots (collected_at)"
-    )
+    op.execute("CREATE INDEX idx_snapshots_collected_at ON snapshots (collected_at)")
 
 
 def downgrade() -> None:

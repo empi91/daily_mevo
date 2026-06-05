@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from app.config import settings
 from app.db import create_pool, close_pool
 from app.logging import setup_logging
+from app.middleware import RequestContextMiddleware
 
 setup_logging()
 
@@ -39,21 +40,29 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             pool = app.state.db_pool
 
             async def run_station_sync() -> None:
-                try:
-                    count = await sync_stations(pool, gbfs_client)
-                    app.state.last_station_sync_at = datetime.now(timezone.utc)
-                    logger.info("Scheduled station sync: %d stations", count)
-                except Exception:
-                    logger.exception("Scheduled station sync failed")
+                structlog.contextvars.clear_contextvars()
+                structlog.contextvars.bind_contextvars(job_name="station_sync")
+                with logfire.span("scheduled_job:{job_name}", job_name="station_sync") as span:
+                    try:
+                        count = await sync_stations(pool, gbfs_client)
+                        app.state.last_station_sync_at = datetime.now(timezone.utc)
+                        span.set_attribute("result_count", count)
+                        logger.info("Scheduled station sync completed", station_count=count)
+                    except Exception:
+                        logger.exception("Scheduled station sync failed")
 
             async def run_snapshot_collection() -> None:
-                try:
-                    count = await collect_snapshots(pool, gbfs_client)
-                    app.state.last_collected_at = datetime.now(timezone.utc)
-                    app.state.last_snapshot_count = count
-                    logger.info("Scheduled snapshot collection: %d snapshots", count)
-                except Exception:
-                    logger.exception("Scheduled snapshot collection failed")
+                structlog.contextvars.clear_contextvars()
+                structlog.contextvars.bind_contextvars(job_name="snapshot_collection")
+                with logfire.span("scheduled_job:{job_name}", job_name="snapshot_collection") as span:
+                    try:
+                        count = await collect_snapshots(pool, gbfs_client)
+                        app.state.last_collected_at = datetime.now(timezone.utc)
+                        app.state.last_snapshot_count = count
+                        span.set_attribute("result_count", count)
+                        logger.info("Scheduled snapshot collection completed", snapshot_count=count)
+                    except Exception:
+                        logger.exception("Scheduled snapshot collection failed")
 
             scheduler = AsyncIOScheduler()
             scheduler.add_job(
@@ -91,6 +100,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 logfire.instrument_fastapi(app)
+app.add_middleware(RequestContextMiddleware)
 
 
 @app.get("/health")

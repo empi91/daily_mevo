@@ -1,10 +1,9 @@
-import logging
-
 import httpx
+import structlog
 
 from app.collector.models import StationInfo, StationStatus
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 BASE_URL = "https://gbfs.urbansharing.com/rowermevo.pl"
 

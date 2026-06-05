@@ -1,10 +1,9 @@
-import logging
-
 import asyncpg
+import structlog
 
 from app.collector.gbfs_client import GBFSClient
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 
 async def sync_stations(pool: asyncpg.Pool, client: GBFSClient) -> int:

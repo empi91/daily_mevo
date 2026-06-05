@@ -1,11 +1,11 @@
-import logging
 from datetime import datetime, timezone
 
 import asyncpg
+import structlog
 
 from app.collector.gbfs_client import GBFSClient
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 
 async def collect_snapshots(pool: asyncpg.Pool, client: GBFSClient) -> int:

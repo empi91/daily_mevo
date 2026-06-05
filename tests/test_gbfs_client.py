@@ -19,9 +19,7 @@ async def test_fetch_station_info_parses_correctly(
             "https://test.example.com/station_information.json"
         )
         data = resp.json()
-        stations = [
-            StationInfo.model_validate(s) for s in data["data"]["stations"]
-        ]
+        stations = [StationInfo.model_validate(s) for s in data["data"]["stations"]]
 
     assert len(stations) == 2
     assert stations[0].station_id == "7694"
@@ -38,9 +36,7 @@ async def test_fetch_station_status_parses_correctly(
     station_status_payload: dict,
 ) -> None:
     data = station_status_payload
-    statuses = [
-        StationStatus.model_validate(s) for s in data["data"]["stations"]
-    ]
+    statuses = [StationStatus.model_validate(s) for s in data["data"]["stations"]]
 
     assert len(statuses) == 2
 
