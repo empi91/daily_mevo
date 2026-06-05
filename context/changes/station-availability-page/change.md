@@ -1,7 +1,7 @@
 ---
 id: station-availability-page
 title: Station Availability Page
-status: implementing
+status: implemented
 roadmap_ref: S-01
 created: 2026-06-05
 updated: 2026-06-05

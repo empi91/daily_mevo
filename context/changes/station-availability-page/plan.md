@@ -596,15 +596,15 @@ Update the Docker build to include frontend compilation and configure FastAPI to
 
 #### Automated
 
-- [x] 6.1 `docker compose build` succeeds
-- [x] 6.2 Container starts and `/health` returns 200
-- [x] 6.3 `curl /` returns index.html
-- [x] 6.4 `curl /api/v1/stations` returns JSON
-- [x] 6.5 `curl /stations/GD045` returns index.html (SPA fallback)
+- [x] 6.1 `docker compose build` succeeds — 77b04be
+- [x] 6.2 Container starts and `/health` returns 200 — 77b04be
+- [x] 6.3 `curl /` returns index.html — 77b04be
+- [x] 6.4 `curl /api/v1/stations` returns JSON — 77b04be
+- [x] 6.5 `curl /stations/GD045` returns index.html (SPA fallback) — 77b04be
 
 #### Manual
 
-- [x] 6.6 Full app works in Docker: homepage, search, station detail
-- [x] 6.7 No CORS errors in browser console
-- [x] 6.8 Frontend assets load correctly
-- [x] 6.9 App stays within 768MB memory limit
+- [x] 6.6 Full app works in Docker: homepage, search, station detail — 77b04be
+- [x] 6.7 No CORS errors in browser console — 77b04be
+- [x] 6.8 Frontend assets load correctly — 77b04be
+- [x] 6.9 App stays within 768MB memory limit — 77b04be
