@@ -7,7 +7,7 @@ import DayOfWeekTabs from '../components/DayOfWeekTabs'
 import DayPartDetail from '../components/DayPartDetail'
 import EmptyState from '../components/EmptyState'
 
-const MIN_SAMPLE_COUNT = 8
+const MIN_SAMPLE_COUNT = 1
 
 function currentDayOfWeek(): number {
   const jsDay = new Date().getDay()
