@@ -352,10 +352,10 @@ Update environment configuration, documentation, and deployment artifacts for th
 
 #### Manual
 
-- [ ] 1.5 Dev mode shows colorized console logs
-- [ ] 1.6 Prod mode outputs valid JSON on every line
-- [ ] 1.7 uvicorn logs appear in structlog format
-- [ ] 1.8 Health endpoint still works
+- [x] 1.5 Dev mode shows colorized console logs
+- [x] 1.6 Prod mode outputs valid JSON on every line
+- [x] 1.7 uvicorn logs appear in structlog format
+- [x] 1.8 Health endpoint still works
 
 ### Phase 2: Request & Collector Observability
 
@@ -377,29 +377,29 @@ Update environment configuration, documentation, and deployment artifacts for th
 
 #### Automated
 
-- [x] 3.1 App starts without errors
-- [x] 3.2 Type checking passes
-- [x] 3.3 Linting passes
-- [x] 3.4 Existing tests pass
-- [x] 3.5 Health endpoint returns data_freshness key
+- [x] 3.1 App starts without errors — 33a121f
+- [x] 3.2 Type checking passes — 33a121f
+- [x] 3.3 Linting passes — 33a121f
+- [x] 3.4 Existing tests pass — 33a121f
+- [x] 3.5 Health endpoint returns data_freshness key — 33a121f
 
 #### Manual
 
-- [x] 3.6 Active collector shows fresh=true with small age_seconds
-- [x] 3.7 Stale data triggers fresh=false and WARNING log
+- [x] 3.6 Active collector shows fresh=true with small age_seconds — 33a121f
+- [x] 3.7 Stale data triggers fresh=false and WARNING log — 33a121f
 
 ### Phase 4: Configuration & Deployment
 
 #### Automated
 
-- [ ] 4.1 uv sync succeeds
-- [ ] 4.2 Docker image builds successfully
-- [ ] 4.3 Container starts and health check passes
-- [ ] 4.4 Type checking passes
-- [ ] 4.5 Linting passes
+- [x] 4.1 uv sync succeeds
+- [x] 4.2 Docker image builds successfully
+- [x] 4.3 Container starts and health check passes
+- [x] 4.4 Type checking passes
+- [x] 4.5 Linting passes
 
 #### Manual
 
-- [ ] 4.6 Container logs are structured JSON
-- [ ] 4.7 .env.example documents all new variables
-- [ ] 4.8 Health endpoint works from within container
+- [x] 4.6 Container logs are structured JSON
+- [x] 4.7 .env.example documents all new variables
+- [x] 4.8 Health endpoint works from within container
