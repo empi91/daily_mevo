@@ -579,32 +579,32 @@ Update the Docker build to include frontend compilation and configure FastAPI to
 
 #### Automated
 
-- [x] 5.1 Frontend builds without errors: `npm run build`
-- [x] 5.2 TypeScript compiles: `npm run typecheck`
+- [x] 5.1 Frontend builds without errors: `npm run build` — 3e41e0e
+- [x] 5.2 TypeScript compiles: `npm run typecheck` — 3e41e0e
 
 #### Manual
 
-- [x] 5.3 Station detail page loads for valid station_id
-- [x] 5.4 Heatmap renders with color-coded cells
-- [x] 5.5 Day-of-week tabs and heatmap row selection work together
-- [x] 5.6 Day-part sections expand/collapse correctly
-- [x] 5.7 Station with no data shows "data still collecting" notice
-- [x] 5.8 Invalid station_id shows 404 page
-- [x] 5.9 Page is usable on mobile viewport (375px)
+- [x] 5.3 Station detail page loads for valid station_id — 3e41e0e
+- [x] 5.4 Heatmap renders with color-coded cells — 3e41e0e
+- [x] 5.5 Day-of-week tabs and heatmap row selection work together — 3e41e0e
+- [x] 5.6 Day-part sections expand/collapse correctly — 3e41e0e
+- [x] 5.7 Station with no data shows "data still collecting" notice — 3e41e0e
+- [x] 5.8 Invalid station_id shows 404 page — 3e41e0e
+- [x] 5.9 Page is usable on mobile viewport (375px) — 3e41e0e
 
 ### Phase 6: Deployment Integration
 
 #### Automated
 
-- [ ] 6.1 `docker compose build` succeeds
-- [ ] 6.2 Container starts and `/health` returns 200
-- [ ] 6.3 `curl /` returns index.html
-- [ ] 6.4 `curl /api/v1/stations` returns JSON
-- [ ] 6.5 `curl /stations/GD045` returns index.html (SPA fallback)
+- [x] 6.1 `docker compose build` succeeds
+- [x] 6.2 Container starts and `/health` returns 200
+- [x] 6.3 `curl /` returns index.html
+- [x] 6.4 `curl /api/v1/stations` returns JSON
+- [x] 6.5 `curl /stations/GD045` returns index.html (SPA fallback)
 
 #### Manual
 
-- [ ] 6.6 Full app works in Docker: homepage, search, station detail
-- [ ] 6.7 No CORS errors in browser console
-- [ ] 6.8 Frontend assets load correctly
-- [ ] 6.9 App stays within 768MB memory limit
+- [x] 6.6 Full app works in Docker: homepage, search, station detail
+- [x] 6.7 No CORS errors in browser console
+- [x] 6.8 Frontend assets load correctly
+- [x] 6.9 App stays within 768MB memory limit

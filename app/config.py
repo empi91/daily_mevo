@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     freshness_threshold_seconds: int = 3600
     reliability_threshold_reliable: int = 6
     reliability_threshold_uncertain: int = 2
-    min_sample_count: int = 8
+    min_sample_count: int = 1
     log_level: str = "INFO"
 
     model_config = {"env_prefix": "MEVO_", "env_file": ".env", "extra": "ignore"}

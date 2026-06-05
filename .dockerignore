@@ -10,3 +10,7 @@ __pycache__
 .python-version
 idea.md
 skills-lock.json
+frontend/node_modules
+frontend/.vite
+.mypy_cache
+.ruff_cache

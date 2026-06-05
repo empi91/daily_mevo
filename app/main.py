@@ -2,10 +2,13 @@ import asyncio
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 from datetime import datetime, timezone
+from pathlib import Path
 
 import logfire
 import structlog
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
 
 from app.api import router as api_router
 from app.config import settings
@@ -141,6 +144,8 @@ logfire.instrument_fastapi(app)
 app.add_middleware(RequestContextMiddleware)
 app.include_router(api_router, prefix="/api/v1")
 
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
 
 @app.get("/health")
 async def health() -> dict:
@@ -219,3 +224,14 @@ async def health() -> dict:
         "collector": collector,
         "data_freshness": data_freshness,
     }
+
+
+if FRONTEND_DIR.is_dir():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def spa_fallback(full_path: str) -> FileResponse:
+        file_path = (FRONTEND_DIR / full_path).resolve()
+        if file_path.is_relative_to(FRONTEND_DIR.resolve()) and file_path.is_file():
+            return FileResponse(file_path)
+        return FileResponse(FRONTEND_DIR / "index.html")
