@@ -352,10 +352,10 @@ Update environment configuration, documentation, and deployment artifacts for th
 
 #### Manual
 
-- [x] 1.5 Dev mode shows colorized console logs
-- [x] 1.6 Prod mode outputs valid JSON on every line
-- [x] 1.7 uvicorn logs appear in structlog format
-- [x] 1.8 Health endpoint still works
+- [x] 1.5 Dev mode shows colorized console logs — 3ab65d8
+- [x] 1.6 Prod mode outputs valid JSON on every line — 3ab65d8
+- [x] 1.7 uvicorn logs appear in structlog format — 3ab65d8
+- [x] 1.8 Health endpoint still works — 3ab65d8
 
 ### Phase 2: Request & Collector Observability
 
@@ -392,14 +392,14 @@ Update environment configuration, documentation, and deployment artifacts for th
 
 #### Automated
 
-- [x] 4.1 uv sync succeeds
-- [x] 4.2 Docker image builds successfully
-- [x] 4.3 Container starts and health check passes
-- [x] 4.4 Type checking passes
-- [x] 4.5 Linting passes
+- [x] 4.1 uv sync succeeds — 3ab65d8
+- [x] 4.2 Docker image builds successfully — 3ab65d8
+- [x] 4.3 Container starts and health check passes — 3ab65d8
+- [x] 4.4 Type checking passes — 3ab65d8
+- [x] 4.5 Linting passes — 3ab65d8
 
 #### Manual
 
-- [x] 4.6 Container logs are structured JSON
-- [x] 4.7 .env.example documents all new variables
-- [x] 4.8 Health endpoint works from within container
+- [x] 4.6 Container logs are structured JSON — 3ab65d8
+- [x] 4.7 .env.example documents all new variables — 3ab65d8
+- [x] 4.8 Health endpoint works from within container — 3ab65d8
