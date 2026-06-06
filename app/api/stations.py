@@ -94,7 +94,9 @@ async def get_station(request: Request, station_id: str) -> StationDetailRespons
             avg_bikes=r["avg_bikes"],
             avg_ebikes=r["avg_ebikes"],
             sample_count=r["sample_count"],
-            reliability_label=_reliability_label(r["avg_bikes"], r["sample_count"]),
+            reliability_label=_reliability_label(
+                r["avg_bikes"] + r["avg_ebikes"], r["sample_count"]
+            ),
         )
         for r in avail_rows
     ]

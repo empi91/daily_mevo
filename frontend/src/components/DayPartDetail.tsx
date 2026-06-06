@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { AvailabilitySlot } from '../api/stations'
+import { bikesLabel, ebikesLabel } from '../polish'
 
 interface DayPart {
   name: string
@@ -82,10 +83,12 @@ export default function DayPartDetail({ availability, selectedDay }: Props) {
     <div className="space-y-2">
       {DAY_PARTS.map((part, partIdx) => {
         const partSlots = daySlots.filter((s) => inRange(s.time_slot, part))
-        const avgBikes =
+        const avgTotal =
           partSlots.length > 0
-            ? partSlots.reduce((sum, s) => sum + s.avg_bikes, 0) / partSlots.length
+            ? partSlots.reduce((sum, s) => sum + s.avg_bikes + s.avg_ebikes, 0) /
+              partSlots.length
             : 0
+        const avgTotalRounded = Math.round(avgTotal)
         const isExpanded = expandedParts.has(partIdx)
 
         return (
@@ -99,7 +102,7 @@ export default function DayPartDetail({ availability, selectedDay }: Props) {
                 <span className="text-gray-500 text-sm ml-2">{part.range}</span>
                 {partSlots.length > 0 && (
                   <span className="text-gray-500 text-sm ml-2">
-                    · śr. {avgBikes.toFixed(1)} rowerów
+                    · średnio {avgTotalRounded} {bikesLabel(avgTotalRounded)}
                   </span>
                 )}
               </div>
@@ -112,31 +115,32 @@ export default function DayPartDetail({ availability, selectedDay }: Props) {
                   <p className="text-sm text-gray-500 py-2">Brak danych dla tego okresu</p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    {partSlots.map((slot) => (
-                      <div
-                        key={slot.time_slot}
-                        className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-50"
-                      >
-                        <span className="text-sm font-mono text-gray-700">
-                          {slot.time_slot.slice(0, 5)}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-900">
-                            {slot.avg_bikes.toFixed(1)} rowerów
+                    {partSlots.map((slot) => {
+                      const bikes = Math.round(slot.avg_bikes)
+                      const ebikes = Math.round(slot.avg_ebikes)
+                      const total = bikes + ebikes
+                      return (
+                        <div
+                          key={slot.time_slot}
+                          className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-50"
+                        >
+                          <span className="text-sm font-mono text-gray-700">
+                            {slot.time_slot.slice(0, 5)}
                           </span>
-                          {slot.avg_ebikes > 0 && (
-                            <span className="text-xs text-gray-500">
-                              ({slot.avg_ebikes.toFixed(1)} e-bike)
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-900">
+                              {bikes} {bikesLabel(bikes)} + {ebikes} {ebikesLabel(ebikes)}
                             </span>
-                          )}
-                          <span
-                            className={`text-xs px-1.5 py-0.5 rounded ${labelColor(slot.reliability_label)}`}
-                          >
-                            {labelText(slot.reliability_label)}
-                          </span>
+                            <span className="text-xs text-gray-500">śr. {total}</span>
+                            <span
+                              className={`text-xs px-1.5 py-0.5 rounded ${labelColor(slot.reliability_label)}`}
+                            >
+                              {labelText(slot.reliability_label)}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 )}
               </div>

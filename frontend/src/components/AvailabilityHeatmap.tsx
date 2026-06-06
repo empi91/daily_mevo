@@ -1,4 +1,5 @@
 import type { AvailabilitySlot } from '../api/stations'
+import { bikesLabel, samplesLabel } from '../polish'
 
 const DAY_LABELS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz']
 const START_HOUR = 5
@@ -29,7 +30,8 @@ function cellTitle(slot: AvailabilitySlot | undefined, time: string): string {
   if (!slot || slot.reliability_label === 'insufficient_data') {
     return `${time} — brak danych`
   }
-  return `${time} — śr. ${slot.avg_bikes.toFixed(1)} rowerów (${slot.sample_count} próbek)`
+  const total = Math.round(slot.avg_bikes + slot.avg_ebikes)
+  return `${time} — śr. ${total} ${bikesLabel(total)} łącznie (${slot.sample_count} ${samplesLabel(slot.sample_count)})`
 }
 
 interface Props {
@@ -100,13 +102,13 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 ml-10 text-xs text-gray-600">
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≥6 rowerów
+            <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≥6 rowerów łącznie
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-yellow-400" /> 2–5 rowerów
+            <span className="inline-block w-3 h-3 rounded-sm bg-yellow-400" /> 2–5 rowerów łącznie
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> ≤1 rower
+            <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> ≤1 rower łącznie
           </span>
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-sm bg-gray-200" /> brak danych
