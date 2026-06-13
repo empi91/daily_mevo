@@ -7,10 +7,13 @@ from pathlib import Path
 import logfire
 import structlog
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 
 from app.api import router as api_router
+from app.auth import auth_router
+from app.auth.db import engine as auth_engine
 from app.config import settings
 from app.db import create_pool, close_pool
 from app.logging import setup_logging
@@ -131,6 +134,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     if scheduler:
         scheduler.shutdown(wait=False)
+    await auth_engine.dispose()
     if hasattr(app.state, "db_pool") and app.state.db_pool:
         await close_pool(app.state.db_pool)
 
@@ -142,7 +146,15 @@ app = FastAPI(
 )
 logfire.instrument_fastapi(app)
 app.add_middleware(RequestContextMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
