@@ -23,5 +23,5 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 async def get_user_db(
     session: AsyncSession = Depends(get_async_session),
-) -> AsyncGenerator[SQLAlchemyUserDatabase[User, int], None]:
+) -> AsyncGenerator[SQLAlchemyUserDatabase, None]:  # type: ignore[type-arg]
     yield SQLAlchemyUserDatabase(session, User)

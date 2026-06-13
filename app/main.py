@@ -13,6 +13,7 @@ from starlette.responses import FileResponse
 
 from app.api import router as api_router
 from app.auth import auth_router
+from app.auth.db import engine as auth_engine
 from app.config import settings
 from app.db import create_pool, close_pool
 from app.logging import setup_logging
@@ -133,6 +134,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     if scheduler:
         scheduler.shutdown(wait=False)
+    await auth_engine.dispose()
     if hasattr(app.state, "db_pool") and app.state.db_pool:
         await close_pool(app.state.db_pool)
 

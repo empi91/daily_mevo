@@ -14,10 +14,10 @@ class Settings(BaseSettings):
     reliability_threshold_uncertain: int = 2
     min_sample_count: int = 1
     log_level: str = "INFO"
-    jwt_secret: str = "change-me-in-production"
+    jwt_secret: str
     jwt_lifetime_seconds: int = 2592000
 
     model_config = {"env_prefix": "MEVO_", "env_file": ".env", "extra": "ignore"}
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]
