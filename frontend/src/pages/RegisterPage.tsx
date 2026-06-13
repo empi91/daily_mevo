@@ -36,7 +36,9 @@ export default function RegisterPage() {
     return msg
   }
 
-  const errorMessage = validationError ?? (registerMutation.isError ? translateRegisterError(registerMutation.error.message) : null)
+  const errorMessage = validationError
+    ?? (registerMutation.isError ? translateRegisterError(registerMutation.error.message) : null)
+    ?? (loginMutation.isError ? loginMutation.error.message : null)
 
   return (
     <div className="max-w-md mx-auto px-4 py-12">

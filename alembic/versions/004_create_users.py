@@ -26,7 +26,6 @@ def upgrade() -> None:
             is_verified BOOLEAN NOT NULL DEFAULT FALSE
         )
     """)
-    op.execute("CREATE INDEX idx_users_email ON users (email)")
 
 
 def downgrade() -> None:

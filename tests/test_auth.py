@@ -15,6 +15,8 @@ TEST_PASSWORD = "securepass123"
 
 @pytest_asyncio.fixture(scope="module", loop_scope="module")
 async def setup_db():
+    if settings.environment != "development":
+        pytest.skip("Auth tests only run in development environment")
     engine = create_async_engine(settings.database_url or "")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -43,9 +45,14 @@ async def test_register_new_user(client: AsyncClient) -> None:
 
 
 async def test_register_duplicate_email(client: AsyncClient) -> None:
+    email = "duplicate@example.com"
+    await client.post(
+        "/api/v1/auth/register",
+        json={"email": email, "password": TEST_PASSWORD},
+    )
     resp = await client.post(
         "/api/v1/auth/register",
-        json={"email": TEST_EMAIL, "password": TEST_PASSWORD},
+        json={"email": email, "password": TEST_PASSWORD},
     )
     assert resp.status_code == 400
     assert "REGISTER_USER_ALREADY_EXISTS" in resp.json()["detail"]

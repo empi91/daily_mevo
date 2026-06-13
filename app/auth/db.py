@@ -8,7 +8,7 @@ from app.auth.models import User
 from app.config import settings
 
 engine = create_async_engine(
-    settings.database_url or "",
+    settings.database_url,
     pool_size=3,
     max_overflow=2,
 )
