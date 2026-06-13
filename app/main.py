@@ -7,10 +7,12 @@ from pathlib import Path
 import logfire
 import structlog
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 
 from app.api import router as api_router
+from app.auth import auth_router
 from app.config import settings
 from app.db import create_pool, close_pool
 from app.logging import setup_logging
@@ -142,7 +144,15 @@ app = FastAPI(
 )
 logfire.instrument_fastapi(app)
 app.add_middleware(RequestContextMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
