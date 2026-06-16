@@ -1,0 +1,89 @@
+{
+  "last_updated": 1781612400,
+  "ttl": 15,
+  "version": "2.3",
+  "data": {
+    "stations": [
+      {
+        "station_id": "7694",
+        "is_installed": true,
+        "is_renting": true,
+        "is_returning": true,
+        "last_reported": 1781612414,
+        "num_vehicles_available": 0,
+        "num_bikes_available": 0,
+        "num_docks_available": 10,
+        "vehicle_types_available": [
+          {
+            "vehicle_type_id": "bike",
+            "count": 0
+          },
+          {
+            "vehicle_type_id": "ebike",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "station_id": "7661",
+        "is_installed": true,
+        "is_renting": true,
+        "is_returning": true,
+        "last_reported": 1781612414,
+        "num_vehicles_available": 0,
+        "num_bikes_available": 0,
+        "num_docks_available": 10,
+        "vehicle_types_available": [
+          {
+            "vehicle_type_id": "bike",
+            "count": 0
+          },
+          {
+            "vehicle_type_id": "ebike",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "station_id": "7660",
+        "is_installed": true,
+        "is_renting": true,
+        "is_returning": true,
+        "last_reported": 1781612414,
+        "num_vehicles_available": 0,
+        "num_bikes_available": 0,
+        "num_docks_available": 10,
+        "vehicle_types_available": [
+          {
+            "vehicle_type_id": "bike",
+            "count": 0
+          },
+          {
+            "vehicle_type_id": "ebike",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "station_id": "7659",
+        "is_installed": true,
+        "is_renting": true,
+        "is_returning": true,
+        "last_reported": 1781612414,
+        "num_vehicles_available": 8,
+        "num_bikes_available": 8,
+        "num_docks_available": 12,
+        "vehicle_types_available": [
+          {
+            "vehicle_type_id": "bike",
+            "count": 0
+          },
+          {
+            "vehicle_type_id": "ebike",
+            "count": 8
+          }
+        ]
+      }
+    ]
+  }
+}

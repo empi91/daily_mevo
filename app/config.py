@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     reliability_threshold_reliable: int = 6
     reliability_threshold_uncertain: int = 2
     min_sample_count: int = 1
+    test_database_url: str | None = None
     cors_origins: list[str] = ["http://localhost:5173"]
     log_level: str = "INFO"
     jwt_secret: str
