@@ -126,7 +126,7 @@ async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
     _run_alembic("downgrade")
 
 
-@pytest.fixture(autouse=True)
+@pytest_asyncio.fixture(autouse=True, loop_scope="session")
 async def clean_tables(request: pytest.FixtureRequest, db_pool: asyncpg.Pool) -> None:
     if "integration" not in [m.name for m in request.node.iter_markers()]:
         return
