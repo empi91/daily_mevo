@@ -1,40 +1,37 @@
+import time
+import uuid
+
+import jwt
 import pytest
-import pytest_asyncio
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import create_async_engine
+from httpx import AsyncClient
 
-from app.auth.models import Base
 from app.config import settings
-from app.main import app
 
-pytestmark = pytest.mark.asyncio(loop_scope="module")
+pytestmark = [pytest.mark.asyncio(loop_scope="session"), pytest.mark.integration]
 
 TEST_EMAIL = "authtest@example.com"
 TEST_PASSWORD = "securepass123"
 
 
-@pytest_asyncio.fixture(scope="module", loop_scope="module")
-async def setup_db():
-    if settings.environment != "development":
-        pytest.skip("Auth tests only run in development environment")
-    engine = create_async_engine(settings.database_url or "")
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-    await engine.dispose()
+async def _register_and_login(
+    api_client: AsyncClient, email: str = TEST_EMAIL, password: str = TEST_PASSWORD
+) -> str:
+    await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": email, "password": password},
+    )
+    login_resp = await api_client.post(
+        "/api/v1/auth/cookie/login",
+        data={"username": email, "password": password},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    cookie = login_resp.cookies.get("fastapiusersauth")
+    assert cookie is not None
+    return cookie
 
 
-@pytest_asyncio.fixture(loop_scope="module")
-async def client(setup_db):
-    transport = ASGITransport(app=app)  # type: ignore[arg-type]
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
-
-
-async def test_register_new_user(client: AsyncClient) -> None:
-    resp = await client.post(
+async def test_register_new_user(api_client: AsyncClient) -> None:
+    resp = await api_client.post(
         "/api/v1/auth/register",
         json={"email": TEST_EMAIL, "password": TEST_PASSWORD},
     )
@@ -44,13 +41,13 @@ async def test_register_new_user(client: AsyncClient) -> None:
     assert "id" in data
 
 
-async def test_register_duplicate_email(client: AsyncClient) -> None:
+async def test_register_duplicate_email(api_client: AsyncClient) -> None:
     email = "duplicate@example.com"
-    await client.post(
+    await api_client.post(
         "/api/v1/auth/register",
         json={"email": email, "password": TEST_PASSWORD},
     )
-    resp = await client.post(
+    resp = await api_client.post(
         "/api/v1/auth/register",
         json={"email": email, "password": TEST_PASSWORD},
     )
@@ -58,16 +55,20 @@ async def test_register_duplicate_email(client: AsyncClient) -> None:
     assert "REGISTER_USER_ALREADY_EXISTS" in resp.json()["detail"]
 
 
-async def test_register_short_password(client: AsyncClient) -> None:
-    resp = await client.post(
+async def test_register_short_password(api_client: AsyncClient) -> None:
+    resp = await api_client.post(
         "/api/v1/auth/register",
         json={"email": "short@example.com", "password": "abc"},
     )
     assert resp.status_code == 400
 
 
-async def test_login_correct_credentials(client: AsyncClient) -> None:
-    resp = await client.post(
+async def test_login_correct_credentials(api_client: AsyncClient) -> None:
+    await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": TEST_EMAIL, "password": TEST_PASSWORD},
+    )
+    resp = await api_client.post(
         "/api/v1/auth/cookie/login",
         data={"username": TEST_EMAIL, "password": TEST_PASSWORD},
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -76,8 +77,12 @@ async def test_login_correct_credentials(client: AsyncClient) -> None:
     assert "fastapiusersauth" in resp.cookies
 
 
-async def test_login_wrong_password(client: AsyncClient) -> None:
-    resp = await client.post(
+async def test_login_wrong_password(api_client: AsyncClient) -> None:
+    await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": TEST_EMAIL, "password": TEST_PASSWORD},
+    )
+    resp = await api_client.post(
         "/api/v1/auth/cookie/login",
         data={"username": TEST_EMAIL, "password": "wrongwrong"},
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -86,8 +91,8 @@ async def test_login_wrong_password(client: AsyncClient) -> None:
     assert "LOGIN_BAD_CREDENTIALS" in resp.json()["detail"]
 
 
-async def test_login_nonexistent_email(client: AsyncClient) -> None:
-    resp = await client.post(
+async def test_login_nonexistent_email(api_client: AsyncClient) -> None:
+    resp = await api_client.post(
         "/api/v1/auth/cookie/login",
         data={"username": "nobody@example.com", "password": "whatever1"},
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -95,16 +100,9 @@ async def test_login_nonexistent_email(client: AsyncClient) -> None:
     assert resp.status_code == 400
 
 
-async def test_me_with_cookie(client: AsyncClient) -> None:
-    login_resp = await client.post(
-        "/api/v1/auth/cookie/login",
-        data={"username": TEST_EMAIL, "password": TEST_PASSWORD},
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    cookie = login_resp.cookies.get("fastapiusersauth")
-    assert cookie is not None
-
-    me_resp = await client.get(
+async def test_me_with_cookie(api_client: AsyncClient) -> None:
+    cookie = await _register_and_login(api_client)
+    me_resp = await api_client.get(
         "/api/v1/users/me",
         cookies={"fastapiusersauth": cookie},
     )
@@ -112,45 +110,85 @@ async def test_me_with_cookie(client: AsyncClient) -> None:
     assert me_resp.json()["email"] == TEST_EMAIL
 
 
-async def test_me_without_cookie(client: AsyncClient) -> None:
-    resp = await client.get("/api/v1/users/me")
+async def test_me_without_cookie(api_client: AsyncClient) -> None:
+    resp = await api_client.get("/api/v1/users/me")
     assert resp.status_code == 401
 
 
-async def test_logout(client: AsyncClient) -> None:
-    login_resp = await client.post(
-        "/api/v1/auth/cookie/login",
-        data={"username": TEST_EMAIL, "password": TEST_PASSWORD},
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    cookie = login_resp.cookies.get("fastapiusersauth")
-    assert cookie is not None
-
-    logout_resp = await client.post(
+async def test_logout(api_client: AsyncClient) -> None:
+    cookie = await _register_and_login(api_client)
+    logout_resp = await api_client.post(
         "/api/v1/auth/cookie/logout",
         cookies={"fastapiusersauth": cookie},
     )
     assert logout_resp.status_code == 204
 
 
-async def test_me_after_logout(client: AsyncClient) -> None:
-    login_resp = await client.post(
-        "/api/v1/auth/cookie/login",
-        data={"username": TEST_EMAIL, "password": TEST_PASSWORD},
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    cookie = login_resp.cookies.get("fastapiusersauth")
-    assert cookie is not None
-
-    logout_resp = await client.post(
+async def test_me_after_logout(api_client: AsyncClient) -> None:
+    cookie = await _register_and_login(api_client)
+    logout_resp = await api_client.post(
         "/api/v1/auth/cookie/logout",
         cookies={"fastapiusersauth": cookie},
     )
-    # Logout clears the cookie (max-age=0); the JWT itself stays valid
-    # (stateless auth). Verify the Set-Cookie header instructs deletion.
     set_cookie = logout_resp.headers.get("set-cookie", "")
     assert 'fastapiusersauth=""' in set_cookie or "Max-Age=0" in set_cookie
 
-    # Without cookie, /me returns 401
-    me_resp = await client.get("/api/v1/users/me")
+    me_resp = await api_client.get("/api/v1/users/me")
     assert me_resp.status_code == 401
+
+
+async def test_cookie_persists_across_requests(api_client: AsyncClient) -> None:
+    email = "persist@example.com"
+    cookie = await _register_and_login(api_client, email=email)
+
+    me_resp_1 = await api_client.get(
+        "/api/v1/users/me",
+        cookies={"fastapiusersauth": cookie},
+    )
+    assert me_resp_1.status_code == 200
+    assert me_resp_1.json()["email"] == email
+
+    me_resp_2 = await api_client.get(
+        "/api/v1/users/me",
+        cookies={"fastapiusersauth": cookie},
+    )
+    assert me_resp_2.status_code == 200
+    assert me_resp_2.json()["email"] == email
+
+
+async def test_expired_jwt_returns_401(api_client: AsyncClient) -> None:
+    payload = {
+        "sub": str(uuid.uuid4()),
+        "aud": "fastapi-users:auth",
+        "exp": int(time.time()) - 3600,
+    }
+    expired_token = jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
+
+    resp = await api_client.get(
+        "/api/v1/users/me",
+        cookies={"fastapiusersauth": expired_token},
+    )
+    assert resp.status_code == 401
+
+
+async def test_cors_preflight_allows_configured_origin(
+    api_client: AsyncClient,
+) -> None:
+    resp = await api_client.options(
+        "/api/v1/auth/cookie/login",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert resp.headers.get("access-control-allow-origin") == "http://localhost:5173"
+    assert resp.headers.get("access-control-allow-credentials") == "true"
+
+    resp_bad = await api_client.options(
+        "/api/v1/auth/cookie/login",
+        headers={
+            "Origin": "http://evil.example.com",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert resp_bad.headers.get("access-control-allow-origin") != "http://evil.example.com"
