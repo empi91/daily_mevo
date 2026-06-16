@@ -108,6 +108,21 @@ def _run_alembic(direction: str) -> None:
             os.environ.pop("MEVO_DATABASE_URL", None)
 
 
+_SAFE_HOSTS = {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
+
+
+def _assert_safe_test_dsn(dsn: str) -> None:
+    from urllib.parse import urlparse
+
+    parsed = urlparse(dsn)
+    host = (parsed.hostname or "").lower()
+    if host not in _SAFE_HOSTS and "test" not in dsn.lower():
+        raise RuntimeError(
+            f"Refusing to run test migrations against '{host}'. "
+            "Set MEVO_TEST_DATABASE_URL to a local or explicitly 'test'-named DB."
+        )
+
+
 @pytest_asyncio.fixture(scope="session", loop_scope="session")
 async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
     test_url = _get_test_database_url()
@@ -116,9 +131,10 @@ async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
 
     dsn = test_url.replace("postgresql+asyncpg://", "postgresql://")
 
+    _assert_safe_test_dsn(dsn)
     _run_alembic("upgrade")
 
-    pool = await asyncpg.create_pool(dsn)
+    pool = await asyncpg.create_pool(dsn, min_size=1, max_size=5, timeout=10)
     assert pool is not None
     yield pool
 

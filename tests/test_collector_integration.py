@@ -99,21 +99,28 @@ def _mock_transport(
     return httpx.MockTransport(handler)
 
 
+@pytest.fixture
+def patch_httpx(monkeypatch: pytest.MonkeyPatch):  # type: ignore[no-untyped-def]
+    def _patch(transport: httpx.MockTransport) -> None:
+        original_init = httpx.AsyncClient.__init__
+
+        def patched_init(self: Any, **kwargs: Any) -> None:
+            kwargs["transport"] = transport
+            original_init(self, **kwargs)
+
+        monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+
+    return _patch
+
+
 async def test_sync_stations_inserts_new_stations(
     db_pool: asyncpg.Pool,
     gbfs_client: GBFSClient,
-    monkeypatch: pytest.MonkeyPatch,
+    patch_httpx: Any,
 ) -> None:
     info_payload = _make_station_info_response([STATION_A, STATION_B])
     transport = _mock_transport(station_info=info_payload)
-
-    original_init = httpx.AsyncClient.__init__
-
-    def patched_init(self: Any, **kwargs: Any) -> None:
-        kwargs["transport"] = transport
-        original_init(self, **kwargs)
-
-    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+    patch_httpx(transport)
 
     count = await sync_stations(db_pool, gbfs_client)
     assert count == 2
@@ -146,7 +153,7 @@ async def test_sync_stations_inserts_new_stations(
 async def test_sync_stations_updates_existing(
     db_pool: asyncpg.Pool,
     gbfs_client: GBFSClient,
-    monkeypatch: pytest.MonkeyPatch,
+    patch_httpx: Any,
 ) -> None:
     async with db_pool.acquire() as conn:
         await conn.execute(
@@ -167,14 +174,7 @@ async def test_sync_stations_updates_existing(
     updated_station = {**STATION_A, "address": "New Alpha Street 99", "name": "Station Alpha Updated"}
     info_payload = _make_station_info_response([updated_station])
     transport = _mock_transport(station_info=info_payload)
-
-    original_init = httpx.AsyncClient.__init__
-
-    def patched_init(self: Any, **kwargs: Any) -> None:
-        kwargs["transport"] = transport
-        original_init(self, **kwargs)
-
-    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+    patch_httpx(transport)
 
     count = await sync_stations(db_pool, gbfs_client)
     assert count == 1
@@ -190,7 +190,7 @@ async def test_sync_stations_updates_existing(
 async def test_sync_stations_deactivates_missing(
     db_pool: asyncpg.Pool,
     gbfs_client: GBFSClient,
-    monkeypatch: pytest.MonkeyPatch,
+    patch_httpx: Any,
 ) -> None:
     async with db_pool.acquire() as conn:
         for st in [STATION_A, STATION_B, STATION_C]:
@@ -211,14 +211,7 @@ async def test_sync_stations_deactivates_missing(
 
     info_payload = _make_station_info_response([STATION_A, STATION_B])
     transport = _mock_transport(station_info=info_payload)
-
-    original_init = httpx.AsyncClient.__init__
-
-    def patched_init(self: Any, **kwargs: Any) -> None:
-        kwargs["transport"] = transport
-        original_init(self, **kwargs)
-
-    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+    patch_httpx(transport)
 
     await sync_stations(db_pool, gbfs_client)
 
@@ -239,7 +232,7 @@ async def test_sync_stations_deactivates_missing(
 async def test_collect_snapshots_persists_to_db(
     db_pool: asyncpg.Pool,
     gbfs_client: GBFSClient,
-    monkeypatch: pytest.MonkeyPatch,
+    patch_httpx: Any,
 ) -> None:
     async with db_pool.acquire() as conn:
         for st in [STATION_A, STATION_B]:
@@ -260,14 +253,7 @@ async def test_collect_snapshots_persists_to_db(
 
     status_payload = _make_station_status_response([STATUS_A, STATUS_B])
     transport = _mock_transport(station_status=status_payload)
-
-    original_init = httpx.AsyncClient.__init__
-
-    def patched_init(self: Any, **kwargs: Any) -> None:
-        kwargs["transport"] = transport
-        original_init(self, **kwargs)
-
-    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+    patch_httpx(transport)
 
     count = await collect_snapshots(db_pool, gbfs_client)
     assert count == 2
@@ -301,7 +287,7 @@ async def test_collect_snapshots_persists_to_db(
 async def test_collect_snapshots_skips_inactive_stations(
     db_pool: asyncpg.Pool,
     gbfs_client: GBFSClient,
-    monkeypatch: pytest.MonkeyPatch,
+    patch_httpx: Any,
 ) -> None:
     async with db_pool.acquire() as conn:
         await conn.execute(
@@ -335,14 +321,7 @@ async def test_collect_snapshots_skips_inactive_stations(
 
     status_payload = _make_station_status_response([STATUS_A, STATUS_B])
     transport = _mock_transport(station_status=status_payload)
-
-    original_init = httpx.AsyncClient.__init__
-
-    def patched_init(self: Any, **kwargs: Any) -> None:
-        kwargs["transport"] = transport
-        original_init(self, **kwargs)
-
-    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+    patch_httpx(transport)
 
     count = await collect_snapshots(db_pool, gbfs_client)
     assert count == 1
