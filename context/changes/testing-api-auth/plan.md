@@ -456,16 +456,16 @@ Fill in test-plan.md cookbook sections §6.2 and §6.5 with patterns from this p
 
 #### Automated
 
-- [ ] 3.1 `uv run pytest tests/test_geocode.py -v` passes with MEVO_TEST_DATABASE_URL
-- [ ] 3.2 `uv run pytest tests/test_stations_api.py -v` passes (Phase 1 + Phase 3 tests)
-- [ ] 3.3 `uv run pytest tests/test_smoke.py -m smoke -v` passes against local dev server
-- [ ] 3.4 `uv run ruff check tests/test_geocode.py tests/test_smoke.py` passes
-- [ ] 3.5 `uv run mypy tests/test_geocode.py tests/test_smoke.py` passes (or no new errors)
-- [ ] 3.6 No 500 status codes in any adversarial test
+- [x] 3.1 `uv run pytest tests/test_geocode.py -v` passes with MEVO_TEST_DATABASE_URL
+- [x] 3.2 `uv run pytest tests/test_stations_api.py -v` passes (Phase 1 + Phase 3 tests)
+- [x] 3.3 `uv run pytest tests/test_smoke.py -m smoke -v` passes against local dev server
+- [x] 3.4 `uv run ruff check tests/test_geocode.py tests/test_smoke.py` passes
+- [x] 3.5 `uv run mypy tests/test_geocode.py tests/test_smoke.py` passes (or no new errors)
+- [x] 3.6 No 500 status codes in any adversarial test
 
 #### Manual
 
-- [ ] 3.7 Review adversarial input set covers SQL, HTML, Unicode, length
+- [x] 3.7 Review adversarial input set covers SQL, HTML, Unicode, length
 - [ ] 3.8 Run smoke tests against production URL to verify 500 detection
 
 ### Phase 4: Cookbook + Docs Update

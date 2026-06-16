@@ -187,3 +187,46 @@ async def test_get_station_empty_availability(
     resp = await api_client.get(f"/api/v1/stations/{station_id}")
     assert resp.status_code == 200
     assert resp.json()["availability"] == []
+
+
+@pytest.mark.parametrize(
+    "station_id",
+    [
+        "a" * 1000,
+        "'; DROP TABLE stations; --",
+        "<img src=x onerror=alert(1)>",
+        "‮test‮",
+    ],
+    ids=["very_long", "sql_injection", "html_xss", "unicode_rtl"],
+)
+async def test_station_id_adversarial_input(
+    api_client: AsyncClient, station_id: str
+) -> None:
+    resp = await api_client.get(f"/api/v1/stations/{station_id}")
+    assert resp.status_code == 404, f"Expected 404, got {resp.status_code} for {station_id!r}"
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"lat": "not_a_number", "lon": "18.65"},
+        {"lat": "54.35", "lon": "not_a_number"},
+        {"lat": "54.35", "lon": "18.65", "limit": "0"},
+        {"lat": "54.35", "lon": "18.65", "limit": "21"},
+    ],
+    ids=["non_numeric_lat", "non_numeric_lon", "limit_zero", "limit_over_max"],
+)
+async def test_nearby_rejects_invalid_params(
+    api_client: AsyncClient, params: dict
+) -> None:
+    resp = await api_client.get("/api/v1/stations/nearby", params=params)
+    assert resp.status_code == 422
+
+
+async def test_health_returns_ok(api_client: AsyncClient) -> None:
+    resp = await api_client.get("/health")
+    assert resp.status_code == 200
+    data = resp.json()
+    for key in ("status", "version", "database", "collector", "data_freshness"):
+        assert key in data, f"Missing key: {key}"
+    assert data["status"] == "ok"

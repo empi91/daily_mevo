@@ -8,6 +8,7 @@ import pytest
 import pytest_asyncio
 from alembic import command
 from alembic.config import Config
+import httpx
 from httpx import ASGITransport, AsyncClient
 
 
@@ -197,6 +198,23 @@ async def api_client(db_pool: asyncpg.Pool) -> AsyncGenerator[AsyncClient, None]
         auth_db.async_session_maker = original_session_maker
         settings.database_url = original_db_url
         settings.collector_enabled = original_collector_enabled
+
+
+@pytest.fixture
+def mock_nominatim(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.api.geocode as geocode_mod
+
+    canned = [{"lat": "54.35", "lon": "18.65", "display_name": "Gdańsk, PL"}]
+
+    def _handler(request: httpx.Request) -> httpx.Response:
+        if request.url.params.get("q") == "__error__":
+            return httpx.Response(status_code=502)
+        if request.url.params.get("q") == "__network_error__":
+            raise httpx.RequestError("simulated network failure", request=request)
+        return httpx.Response(200, json=canned)
+
+    mock_client = httpx.AsyncClient(transport=httpx.MockTransport(_handler))
+    monkeypatch.setattr(geocode_mod, "_http_client", mock_client)
 
 
 async def insert_test_snapshots(
