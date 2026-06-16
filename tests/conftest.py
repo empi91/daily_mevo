@@ -127,10 +127,11 @@ async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
 
 
 @pytest_asyncio.fixture(autouse=True, loop_scope="session")
-async def clean_tables(request: pytest.FixtureRequest, db_pool: asyncpg.Pool) -> None:
+async def clean_tables(request: pytest.FixtureRequest) -> None:
     if "integration" not in [m.name for m in request.node.iter_markers()]:
         return
-    async with db_pool.acquire() as conn:
+    pool: asyncpg.Pool = request.getfixturevalue("db_pool")
+    async with pool.acquire() as conn:
         await conn.execute(
             "TRUNCATE stations, snapshots, station_availability CASCADE"
         )
