@@ -30,9 +30,16 @@ async def test_list_stations_returns_active_only(
 
     resp = await api_client.get("/api/v1/stations")
     assert resp.status_code == 200
-    station_ids = [s["station_id"] for s in resp.json()]
+    stations = resp.json()
+    station_ids = [s["station_id"] for s in stations]
     assert "active-001" in station_ids
     assert "inactive-001" not in station_ids
+
+    active = next(s for s in stations if s["station_id"] == "active-001")
+    assert active["name"] == "Test Station active-001"
+    assert active["lat"] == pytest.approx(54.35)
+    assert active["lon"] == pytest.approx(18.65)
+    assert active["capacity"] == 20
 
 
 async def test_get_station_returns_availability(
@@ -72,6 +79,8 @@ async def test_get_station_returns_availability(
         (2.0, 0.0, 5, "uncertain"),
         # avg_bikes + avg_ebikes < reliability_threshold_uncertain → empty
         (1.9, 0.0, 5, "empty"),
+        # both avg_bikes and avg_ebikes contribute to crossing reliable threshold
+        (4.0, 2.0, 5, "reliable"),
     ],
 )
 async def test_reliability_label_at_boundaries(

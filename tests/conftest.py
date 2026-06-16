@@ -190,11 +190,13 @@ async def api_client(db_pool: asyncpg.Pool) -> AsyncGenerator[AsyncClient, None]
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             yield client
 
-    await test_engine.dispose()
-    auth_db.engine = original_engine
-    auth_db.async_session_maker = original_session_maker
-    settings.database_url = original_db_url
-    settings.collector_enabled = original_collector_enabled
+    try:
+        await test_engine.dispose()
+    finally:
+        auth_db.engine = original_engine
+        auth_db.async_session_maker = original_session_maker
+        settings.database_url = original_db_url
+        settings.collector_enabled = original_collector_enabled
 
 
 async def insert_test_snapshots(

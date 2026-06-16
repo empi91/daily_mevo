@@ -13,6 +13,10 @@ TEST_EMAIL = "authtest@example.com"
 TEST_PASSWORD = "securepass123"
 
 
+def _cookie_header(token: str) -> dict[str, str]:
+    return {"Cookie": f"fastapiusersauth={token}"}
+
+
 async def _register_and_login(
     api_client: AsyncClient, email: str = TEST_EMAIL, password: str = TEST_PASSWORD
 ) -> str:
@@ -104,7 +108,7 @@ async def test_me_with_cookie(api_client: AsyncClient) -> None:
     cookie = await _register_and_login(api_client)
     me_resp = await api_client.get(
         "/api/v1/users/me",
-        cookies={"fastapiusersauth": cookie},
+        headers=_cookie_header(cookie),
     )
     assert me_resp.status_code == 200
     assert me_resp.json()["email"] == TEST_EMAIL
@@ -119,7 +123,7 @@ async def test_logout(api_client: AsyncClient) -> None:
     cookie = await _register_and_login(api_client)
     logout_resp = await api_client.post(
         "/api/v1/auth/cookie/logout",
-        cookies={"fastapiusersauth": cookie},
+        headers=_cookie_header(cookie),
     )
     assert logout_resp.status_code == 204
 
@@ -128,7 +132,7 @@ async def test_me_after_logout(api_client: AsyncClient) -> None:
     cookie = await _register_and_login(api_client)
     logout_resp = await api_client.post(
         "/api/v1/auth/cookie/logout",
-        cookies={"fastapiusersauth": cookie},
+        headers=_cookie_header(cookie),
     )
     set_cookie = logout_resp.headers.get("set-cookie", "")
     assert 'fastapiusersauth=""' in set_cookie or "Max-Age=0" in set_cookie
@@ -143,14 +147,14 @@ async def test_cookie_persists_across_requests(api_client: AsyncClient) -> None:
 
     me_resp_1 = await api_client.get(
         "/api/v1/users/me",
-        cookies={"fastapiusersauth": cookie},
+        headers=_cookie_header(cookie),
     )
     assert me_resp_1.status_code == 200
     assert me_resp_1.json()["email"] == email
 
     me_resp_2 = await api_client.get(
         "/api/v1/users/me",
-        cookies={"fastapiusersauth": cookie},
+        headers=_cookie_header(cookie),
     )
     assert me_resp_2.status_code == 200
     assert me_resp_2.json()["email"] == email
@@ -166,7 +170,7 @@ async def test_expired_jwt_returns_401(api_client: AsyncClient) -> None:
 
     resp = await api_client.get(
         "/api/v1/users/me",
-        cookies={"fastapiusersauth": expired_token},
+        headers=_cookie_header(expired_token),
     )
     assert resp.status_code == 401
 

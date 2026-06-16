@@ -24,21 +24,24 @@ def setup_logging() -> None:
             exc_info=True,
         )
 
+    if settings.environment == "development":
+        renderer: structlog.types.Processor = structlog.dev.ConsoleRenderer()
+    else:
+        renderer = structlog.processors.JSONRenderer()
+
     shared_processors: list[structlog.types.Processor] = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
     ]
+    # ConsoleRenderer handles exc_info formatting itself; adding format_exc_info
+    # alongside it triggers a UserWarning from structlog.
+    if not isinstance(renderer, structlog.dev.ConsoleRenderer):
+        shared_processors.append(structlog.processors.format_exc_info)
     if logfire_active:
         shared_processors.append(logfire.StructlogProcessor())
-
-    if settings.environment == "development":
-        renderer: structlog.types.Processor = structlog.dev.ConsoleRenderer()
-    else:
-        renderer = structlog.processors.JSONRenderer()
 
     structlog.configure(
         processors=[

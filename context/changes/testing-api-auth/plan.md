@@ -442,15 +442,15 @@ Fill in test-plan.md cookbook sections §6.2 and §6.5 with patterns from this p
 
 #### Automated
 
-- [x] 2.1 `uv run pytest tests/test_auth.py -v` passes with MEVO_TEST_DATABASE_URL (all 11 original + 3 new tests)
-- [x] 2.2 `uv run ruff check tests/test_auth.py` passes
-- [x] 2.3 `uv run mypy tests/test_auth.py` passes (or no new errors)
+- [x] 2.1 `uv run pytest tests/test_auth.py -v` passes with MEVO_TEST_DATABASE_URL (all 11 original + 3 new tests) — 97eec2d
+- [x] 2.2 `uv run ruff check tests/test_auth.py` passes — 97eec2d
+- [x] 2.3 `uv run mypy tests/test_auth.py` passes (or no new errors) — 97eec2d
 
 #### Manual
 
-- [x] 2.4 Confirm old auth tests pass with new fixture (no regressions)
-- [x] 2.5 Confirm expired JWT test uses an actually expired token
-- [x] 2.6 Confirm CORS test sends real OPTIONS request
+- [x] 2.4 Confirm old auth tests pass with new fixture (no regressions) — 97eec2d
+- [x] 2.5 Confirm expired JWT test uses an actually expired token — 97eec2d
+- [x] 2.6 Confirm CORS test sends real OPTIONS request — 97eec2d
 
 ### Phase 3: Adversarial Input + Extras
 
