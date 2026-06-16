@@ -8,6 +8,7 @@ import pytest
 import pytest_asyncio
 from alembic import command
 from alembic.config import Config
+from httpx import ASGITransport, AsyncClient
 
 
 @pytest.fixture
@@ -149,11 +150,51 @@ async def clean_tables(request: pytest.FixtureRequest) -> None:
     pool: asyncpg.Pool = request.getfixturevalue("db_pool")
     async with pool.acquire() as conn:
         await conn.execute(
-            "TRUNCATE stations, snapshots, station_availability CASCADE"
+            "TRUNCATE stations, snapshots, station_availability, users CASCADE"
         )
         await conn.execute(
             "UPDATE agg_watermark SET last_processed_id = 0, updated_at = now()"
         )
+
+
+@pytest_asyncio.fixture(scope="session", loop_scope="session")
+async def api_client(db_pool: asyncpg.Pool) -> AsyncGenerator[AsyncClient, None]:
+    test_url = _get_test_database_url()
+    if not test_url:
+        pytest.skip("TEST_DATABASE_URL not set — skipping integration tests")
+
+    from app.config import settings
+    from app.main import app
+    import app.auth.db as auth_db
+    from sqlalchemy.ext.asyncio import async_sessionmaker as sa_session_maker
+    from sqlalchemy.ext.asyncio import create_async_engine as sa_create_engine
+
+    original_db_url = settings.database_url
+    original_collector_enabled = settings.collector_enabled
+    settings.database_url = test_url
+    settings.collector_enabled = False
+
+    asyncpg_url = test_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    if not asyncpg_url.startswith("postgresql+asyncpg://"):
+        asyncpg_url = "postgresql+asyncpg://" + asyncpg_url.split("://", 1)[-1]
+
+    original_engine = auth_db.engine
+    original_session_maker = auth_db.async_session_maker
+    test_engine = sa_create_engine(asyncpg_url, pool_size=3, max_overflow=2)
+    test_session_maker = sa_session_maker(test_engine, expire_on_commit=False)
+    auth_db.engine = test_engine
+    auth_db.async_session_maker = test_session_maker
+
+    transport = ASGITransport(app=app)  # type: ignore[arg-type]
+    async with app.router.lifespan_context(app):
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            yield client
+
+    await test_engine.dispose()
+    auth_db.engine = original_engine
+    auth_db.async_session_maker = original_session_maker
+    settings.database_url = original_db_url
+    settings.collector_enabled = original_collector_enabled
 
 
 async def insert_test_snapshots(
@@ -161,6 +202,10 @@ async def insert_test_snapshots(
     station_id: str,
     snapshots_data: list[dict],
     station_name: str | None = None,
+    lat: float = 54.35,
+    lon: float = 18.65,
+    capacity: int = 20,
+    is_active: bool = True,
 ) -> list[int]:
     existing = await conn.fetchval(
         "SELECT station_id FROM stations WHERE station_id = $1", station_id
@@ -174,11 +219,11 @@ async def insert_test_snapshots(
             station_id,
             station_name or f"Test Station {station_id}",
             "Test Address",
-            54.35,
-            18.65,
-            20,
+            lat,
+            lon,
+            capacity,
             False,
-            True,
+            is_active,
         )
 
     ids: list[int] = []
