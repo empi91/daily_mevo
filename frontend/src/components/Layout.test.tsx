@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 import Layout from './Layout'
-import { renderWithProviders } from '../test/helpers'
+import { renderWithProviders, createMockAuthValue } from '../test/helpers'
 import { useAuth } from '../hooks/useAuth'
 
 vi.mock('../hooks/useAuth')
@@ -8,15 +8,7 @@ vi.mock('../hooks/useAuth')
 const mockedUseAuth = vi.mocked(useAuth)
 
 function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
-  mockedUseAuth.mockReturnValue({
-    user: null,
-    isLoading: false,
-    isAuthenticated: false,
-    loginMutation: {} as ReturnType<typeof useAuth>['loginMutation'],
-    registerMutation: {} as ReturnType<typeof useAuth>['registerMutation'],
-    logoutMutation: { mutate: vi.fn(), isPending: false } as unknown as ReturnType<typeof useAuth>['logoutMutation'],
-    ...overrides,
-  })
+  mockedUseAuth.mockReturnValue(createMockAuthValue(overrides))
 }
 
 beforeEach(() => {

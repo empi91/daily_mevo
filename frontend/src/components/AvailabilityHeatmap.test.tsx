@@ -52,7 +52,7 @@ test('AvailabilityHeatmap cells with no data have bg-gray-200', () => {
 test('AvailabilityHeatmap selected day row has ring classes', () => {
   renderHeatmap({ selectedDay: 2 })
   const dayLabel = screen.getByText('Śr')
-  const row = dayLabel.parentElement!
+  const row = dayLabel.closest('.cursor-pointer')!
   expect(row.className).toContain('ring-1')
   expect(row.className).toContain('ring-blue-300')
 })
@@ -60,7 +60,7 @@ test('AvailabilityHeatmap selected day row has ring classes', () => {
 test('AvailabilityHeatmap clicking a day row calls onSelectDay', async () => {
   const { onSelectDay } = renderHeatmap({ selectedDay: 0 })
   const tuesdayLabel = screen.getByText('Wt')
-  await userEvent.click(tuesdayLabel.parentElement!)
+  await userEvent.click(tuesdayLabel.closest('.cursor-pointer')!)
   expect(onSelectDay).toHaveBeenCalledWith(1)
 })
 
