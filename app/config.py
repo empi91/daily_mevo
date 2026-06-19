@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     jwt_secret: str
     jwt_lifetime_seconds: int = 2592000
+    snapshot_retention_days: int = 14
+    ntfy_topic: str | None = None
+    db_size_warning_mb: int = 400
+    db_size_critical_mb: int = 450
+    db_monitor_interval_hours: int = 6
 
     model_config = {"env_prefix": "MEVO_", "env_file": ".env", "extra": "ignore"}
 

@@ -151,7 +151,7 @@ async def clean_tables(request: pytest.FixtureRequest) -> None:
     pool: asyncpg.Pool = request.getfixturevalue("db_pool")
     async with pool.acquire() as conn:
         await conn.execute(
-            "TRUNCATE stations, snapshots, station_availability, users CASCADE"
+            "TRUNCATE stations, snapshots, station_availability, users, db_size_log CASCADE"
         )
         await conn.execute(
             "UPDATE agg_watermark SET last_processed_id = 0, updated_at = now()"

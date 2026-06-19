@@ -43,6 +43,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             from apscheduler.schedulers.asyncio import AsyncIOScheduler
             from app.collector import GBFSClient, sync_stations, collect_snapshots
             from app.aggregation import aggregate_availability
+            from app.retention import purge_old_snapshots
+            from app.monitoring import check_db_size
 
             gbfs_client = GBFSClient()
             pool = app.state.db_pool
@@ -96,6 +98,42 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                     except Exception:
                         logger.exception("Scheduled aggregation failed")
 
+            async def run_retention() -> None:
+                structlog.contextvars.clear_contextvars()
+                structlog.contextvars.bind_contextvars(job_name="retention")
+                with logfire.span(
+                    "scheduled_job:{job_name}", job_name="retention"
+                ) as span:
+                    try:
+                        count = await purge_old_snapshots(
+                            pool, settings.snapshot_retention_days
+                        )
+                        span.set_attribute("result_count", count)
+                        logger.info("Scheduled retention completed", rows_deleted=count)
+                    except Exception:
+                        logger.exception("Scheduled retention failed")
+
+            async def run_db_monitor() -> None:
+                structlog.contextvars.clear_contextvars()
+                structlog.contextvars.bind_contextvars(job_name="db_monitor")
+                with logfire.span(
+                    "scheduled_job:{job_name}", job_name="db_monitor"
+                ) as span:
+                    try:
+                        size_mb = await check_db_size(
+                            pool,
+                            settings.ntfy_topic,
+                            settings.db_size_warning_mb,
+                            settings.db_size_critical_mb,
+                        )
+                        span.set_attribute("result_size_mb", size_mb)
+                        logger.info(
+                            "Scheduled DB monitor completed",
+                            size_mb=round(size_mb, 1),
+                        )
+                    except Exception:
+                        logger.exception("Scheduled DB monitor failed")
+
             scheduler = AsyncIOScheduler()
             scheduler.add_job(
                 run_station_sync,
@@ -115,6 +153,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                 hours=1,
                 id="aggregation",
             )
+            scheduler.add_job(
+                run_retention,
+                "interval",
+                hours=24,
+                id="retention",
+            )
+            scheduler.add_job(
+                run_db_monitor,
+                "interval",
+                hours=settings.db_monitor_interval_hours,
+                id="db_monitor",
+            )
             scheduler.start()
             app.state.scheduler = scheduler
 
@@ -126,6 +176,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             sync_task.add_done_callback(_log_task_exception)
             snapshot_task = asyncio.create_task(run_snapshot_collection())
             snapshot_task.add_done_callback(_log_task_exception)
+            retention_task = asyncio.create_task(run_retention())
+            retention_task.add_done_callback(_log_task_exception)
 
         except Exception:
             logger.exception("Failed to start collector scheduler")
@@ -228,6 +280,27 @@ async def health() -> dict:
             threshold_seconds=data_freshness["threshold_seconds"],
         )
 
+    retention = {
+        "enabled": True,
+        "retention_days": settings.snapshot_retention_days,
+    }
+
+    db_size: dict | None = None
+    if hasattr(app.state, "db_pool") and app.state.db_pool:
+        try:
+            async with app.state.db_pool.acquire() as conn:
+                row = await conn.fetchrow(
+                    "SELECT size_bytes FROM db_size_log ORDER BY id DESC LIMIT 1"
+                )
+                if row:
+                    db_size = {
+                        "last_check_mb": round(row["size_bytes"] / (1024 * 1024), 1),
+                        "warning_threshold_mb": settings.db_size_warning_mb,
+                        "critical_threshold_mb": settings.db_size_critical_mb,
+                    }
+        except Exception:
+            pass
+
     return {
         "status": "ok",
         "version": settings.app_version,
@@ -235,6 +308,8 @@ async def health() -> dict:
         "database": db_status,
         "collector": collector,
         "data_freshness": data_freshness,
+        "retention": retention,
+        "db_size": db_size,
     }
 
 
