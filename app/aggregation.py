@@ -17,7 +17,9 @@ async def aggregate_availability(pool: asyncpg.Pool) -> int:
 
         watermark_from: int = watermark_row["last_processed_id"]
 
-        max_id_row = await conn.fetchrow("SELECT COALESCE(MAX(id), 0) AS max_id FROM snapshots")
+        max_id_row = await conn.fetchrow(
+            "SELECT COALESCE(MAX(id), 0) AS max_id FROM snapshots"
+        )
         assert max_id_row is not None
         current_max: int = max_id_row["max_id"]
 
@@ -31,7 +33,8 @@ async def aggregate_availability(pool: asyncpg.Pool) -> int:
             )
             return 0
 
-        result = await conn.execute(f"""
+        result = await conn.execute(
+            f"""
             WITH new_data AS (
                 SELECT
                     station_id,
@@ -71,7 +74,9 @@ async def aggregate_availability(pool: asyncpg.Pool) -> int:
                              / (station_availability.sample_count + EXCLUDED.sample_count),
                 sample_count = station_availability.sample_count + EXCLUDED.sample_count,
                 updated_at = EXCLUDED.updated_at
-        """, watermark_from)
+        """,
+            watermark_from,
+        )
 
         rows_upserted = int(result.split()[-1]) if result else 0
 

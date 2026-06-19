@@ -171,7 +171,11 @@ async def test_sync_stations_updates_existing(
             True,
         )
 
-    updated_station = {**STATION_A, "address": "New Alpha Street 99", "name": "Station Alpha Updated"}
+    updated_station = {
+        **STATION_A,
+        "address": "New Alpha Street 99",
+        "name": "Station Alpha Updated",
+    }
     info_payload = _make_station_info_response([updated_station])
     transport = _mock_transport(station_info=info_payload)
     patch_httpx(transport)

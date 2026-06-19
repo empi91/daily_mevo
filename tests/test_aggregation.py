@@ -11,6 +11,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.asyncio(loop_scope="session")
 # All timestamps target Monday 2026-06-15 in Warsaw (CEST = UTC+2).
 # ISODOW Monday = 1 → day_of_week = 0.
 
+
 def _utc(hour: int, minute: int) -> datetime:
     return datetime(2026, 6, 15, hour, minute, tzinfo=timezone.utc)
 
@@ -18,15 +19,17 @@ def _utc(hour: int, minute: int) -> datetime:
 async def _get_availability(
     conn: asyncpg.Connection, station_id: str
 ) -> list[asyncpg.Record]:
-    return list(await conn.fetch(
-        """
+    return list(
+        await conn.fetch(
+            """
         SELECT day_of_week, time_slot, avg_bikes, avg_ebikes, sample_count
         FROM station_availability
         WHERE station_id = $1
         ORDER BY day_of_week, time_slot
         """,
-        station_id,
-    ))
+            station_id,
+        )
+    )
 
 
 async def test_aggregation_first_run_computes_simple_mean(
@@ -38,9 +41,24 @@ async def test_aggregation_first_run_computes_simple_mean(
             conn,
             "AGG-001",
             [
-                {"bikes_available": 4, "ebikes_available": 2, "docks_available": 10, "collected_at": _utc(6, 0)},
-                {"bikes_available": 6, "ebikes_available": 4, "docks_available": 10, "collected_at": _utc(6, 5)},
-                {"bikes_available": 8, "ebikes_available": 6, "docks_available": 10, "collected_at": _utc(6, 10)},
+                {
+                    "bikes_available": 4,
+                    "ebikes_available": 2,
+                    "docks_available": 10,
+                    "collected_at": _utc(6, 0),
+                },
+                {
+                    "bikes_available": 6,
+                    "ebikes_available": 4,
+                    "docks_available": 10,
+                    "collected_at": _utc(6, 5),
+                },
+                {
+                    "bikes_available": 8,
+                    "ebikes_available": 6,
+                    "docks_available": 10,
+                    "collected_at": _utc(6, 10),
+                },
             ],
         )
         # 1 snapshot in timeslot 08:15 (UTC 06:20 → Warsaw 08:20)
@@ -48,7 +66,12 @@ async def test_aggregation_first_run_computes_simple_mean(
             conn,
             "AGG-001",
             [
-                {"bikes_available": 10, "ebikes_available": 0, "docks_available": 10, "collected_at": _utc(6, 20)},
+                {
+                    "bikes_available": 10,
+                    "ebikes_available": 0,
+                    "docks_available": 10,
+                    "collected_at": _utc(6, 20),
+                },
             ],
         )
 
@@ -62,8 +85,8 @@ async def test_aggregation_first_run_computes_simple_mean(
 
     slot_0800 = rows[0]
     assert slot_0800["day_of_week"] == 0
-    assert slot_0800["avg_bikes"] == pytest.approx(6.0)       # (4+6+8)/3
-    assert slot_0800["avg_ebikes"] == pytest.approx(4.0)      # (2+4+6)/3
+    assert slot_0800["avg_bikes"] == pytest.approx(6.0)  # (4+6+8)/3
+    assert slot_0800["avg_ebikes"] == pytest.approx(4.0)  # (2+4+6)/3
     assert slot_0800["sample_count"] == 3
 
     slot_0815 = rows[1]
@@ -81,7 +104,12 @@ async def test_aggregation_single_snapshot_exact_value(
             conn,
             "AGG-002",
             [
-                {"bikes_available": 5, "ebikes_available": 3, "docks_available": 12, "collected_at": _utc(7, 0)},
+                {
+                    "bikes_available": 5,
+                    "ebikes_available": 3,
+                    "docks_available": 12,
+                    "collected_at": _utc(7, 0),
+                },
             ],
         )
 
@@ -105,8 +133,18 @@ async def test_aggregation_weighted_merge_correct(
             conn,
             "AGG-003",
             [
-                {"bikes_available": 4, "ebikes_available": 2, "docks_available": 10, "collected_at": _utc(8, 0)},
-                {"bikes_available": 6, "ebikes_available": 4, "docks_available": 10, "collected_at": _utc(8, 5)},
+                {
+                    "bikes_available": 4,
+                    "ebikes_available": 2,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 0),
+                },
+                {
+                    "bikes_available": 6,
+                    "ebikes_available": 4,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 5),
+                },
             ],
         )
 
@@ -118,9 +156,24 @@ async def test_aggregation_weighted_merge_correct(
             conn,
             "AGG-003",
             [
-                {"bikes_available": 10, "ebikes_available": 6, "docks_available": 10, "collected_at": _utc(8, 7)},
-                {"bikes_available": 10, "ebikes_available": 6, "docks_available": 10, "collected_at": _utc(8, 9)},
-                {"bikes_available": 10, "ebikes_available": 6, "docks_available": 10, "collected_at": _utc(8, 11)},
+                {
+                    "bikes_available": 10,
+                    "ebikes_available": 6,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 7),
+                },
+                {
+                    "bikes_available": 10,
+                    "ebikes_available": 6,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 9),
+                },
+                {
+                    "bikes_available": 10,
+                    "ebikes_available": 6,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 11),
+                },
             ],
         )
 
@@ -146,8 +199,18 @@ async def test_aggregation_gap_leaves_old_slots_intact(
             conn,
             "AGG-004",
             [
-                {"bikes_available": 3, "ebikes_available": 1, "docks_available": 10, "collected_at": _utc(8, 0)},
-                {"bikes_available": 7, "ebikes_available": 3, "docks_available": 10, "collected_at": _utc(8, 10)},
+                {
+                    "bikes_available": 3,
+                    "ebikes_available": 1,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 0),
+                },
+                {
+                    "bikes_available": 7,
+                    "ebikes_available": 3,
+                    "docks_available": 10,
+                    "collected_at": _utc(8, 10),
+                },
             ],
         )
 
@@ -159,7 +222,12 @@ async def test_aggregation_gap_leaves_old_slots_intact(
             conn,
             "AGG-004",
             [
-                {"bikes_available": 20, "ebikes_available": 10, "docks_available": 10, "collected_at": _utc(10, 0)},
+                {
+                    "bikes_available": 20,
+                    "ebikes_available": 10,
+                    "docks_available": 10,
+                    "collected_at": _utc(10, 0),
+                },
             ],
         )
 
@@ -171,8 +239,8 @@ async def test_aggregation_gap_leaves_old_slots_intact(
     assert len(rows) == 2
 
     t1 = rows[0]
-    assert t1["avg_bikes"] == pytest.approx(5.0)    # (3+7)/2 unchanged
-    assert t1["avg_ebikes"] == pytest.approx(2.0)   # (1+3)/2 unchanged
+    assert t1["avg_bikes"] == pytest.approx(5.0)  # (3+7)/2 unchanged
+    assert t1["avg_ebikes"] == pytest.approx(2.0)  # (1+3)/2 unchanged
     assert t1["sample_count"] == 2
 
     t2 = rows[1]
@@ -189,8 +257,18 @@ async def test_aggregation_double_run_is_idempotent(
             conn,
             "AGG-005",
             [
-                {"bikes_available": 4, "ebikes_available": 2, "docks_available": 10, "collected_at": _utc(9, 0)},
-                {"bikes_available": 6, "ebikes_available": 4, "docks_available": 10, "collected_at": _utc(9, 5)},
+                {
+                    "bikes_available": 4,
+                    "ebikes_available": 2,
+                    "docks_available": 10,
+                    "collected_at": _utc(9, 0),
+                },
+                {
+                    "bikes_available": 6,
+                    "ebikes_available": 4,
+                    "docks_available": 10,
+                    "collected_at": _utc(9, 5),
+                },
             ],
         )
 

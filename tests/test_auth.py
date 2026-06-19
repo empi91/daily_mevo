@@ -195,4 +195,6 @@ async def test_cors_preflight_allows_configured_origin(
             "Access-Control-Request-Method": "POST",
         },
     )
-    assert resp_bad.headers.get("access-control-allow-origin") != "http://evil.example.com"
+    assert (
+        resp_bad.headers.get("access-control-allow-origin") != "http://evil.example.com"
+    )

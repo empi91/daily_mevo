@@ -17,7 +17,14 @@ def _scos_dist(lat1: float, lon1: float, lat2: float, lon2: float) -> int:
     r = 6371000
     la1, lo1, la2, lo2 = map(math.radians, [lat1, lon1, lat2, lon2])
     return int(
-        r * math.acos(min(1.0, math.cos(la1) * math.cos(la2) * math.cos(lo2 - lo1) + math.sin(la1) * math.sin(la2)))
+        r
+        * math.acos(
+            min(
+                1.0,
+                math.cos(la1) * math.cos(la2) * math.cos(lo2 - lo1)
+                + math.sin(la1) * math.sin(la2),
+            )
+        )
     )
 
 
@@ -52,7 +59,12 @@ async def test_get_station_returns_availability(
             "INSERT INTO station_availability "
             "(station_id, day_of_week, time_slot, avg_bikes, avg_ebikes, sample_count) "
             "VALUES ($1, $2, $3, $4, $5, $6)",
-            station_id, 1, time(8, 0), 3.5, 1.5, 10,
+            station_id,
+            1,
+            time(8, 0),
+            3.5,
+            1.5,
+            10,
         )
 
     resp = await api_client.get(f"/api/v1/stations/{station_id}")
@@ -102,7 +114,12 @@ async def test_reliability_label_at_boundaries(
             "INSERT INTO station_availability "
             "(station_id, day_of_week, time_slot, avg_bikes, avg_ebikes, sample_count) "
             "VALUES ($1, $2, $3, $4, $5, $6)",
-            station_id, 1, time(9, 0), avg_bikes, avg_ebikes, sample_count,
+            station_id,
+            1,
+            time(9, 0),
+            avg_bikes,
+            avg_ebikes,
+            sample_count,
         )
 
     resp = await api_client.get(f"/api/v1/stations/{station_id}")
@@ -134,8 +151,12 @@ async def test_nearby_stations_distance_correct(
     expected_b = _scos_dist(query_lat, query_lon, sta_b_lat, sta_b_lon)  # ≈3241
 
     async with db_pool.acquire() as conn:
-        await insert_test_snapshots(conn, "nearby-dist-a", [], lat=sta_a_lat, lon=sta_a_lon)
-        await insert_test_snapshots(conn, "nearby-dist-b", [], lat=sta_b_lat, lon=sta_b_lon)
+        await insert_test_snapshots(
+            conn, "nearby-dist-a", [], lat=sta_a_lat, lon=sta_a_lon
+        )
+        await insert_test_snapshots(
+            conn, "nearby-dist-b", [], lat=sta_b_lat, lon=sta_b_lon
+        )
 
     resp = await api_client.get(
         "/api/v1/stations/nearby",
@@ -177,9 +198,7 @@ async def test_nearby_stations_sorted_and_limited(
     assert len(resp2.json()) == 2
 
 
-async def test_get_station_empty_availability(
-    api_client: AsyncClient, db_pool
-) -> None:
+async def test_get_station_empty_availability(api_client: AsyncClient, db_pool) -> None:
     station_id = "no-avail-001"
     async with db_pool.acquire() as conn:
         await insert_test_snapshots(conn, station_id, [])
@@ -203,7 +222,9 @@ async def test_station_id_adversarial_input(
     api_client: AsyncClient, station_id: str
 ) -> None:
     resp = await api_client.get(f"/api/v1/stations/{station_id}")
-    assert resp.status_code == 404, f"Expected 404, got {resp.status_code} for {station_id!r}"
+    assert resp.status_code == 404, (
+        f"Expected 404, got {resp.status_code} for {station_id!r}"
+    )
 
 
 @pytest.mark.parametrize(
