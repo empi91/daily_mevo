@@ -4,6 +4,7 @@ Asserts that backend responses contain the exact fields the frontend TypeScript
 interfaces expect (frontend/src/api/stations.ts). Catches field renames, removals,
 or type changes that would silently break the frontend.
 """
+
 from __future__ import annotations
 
 from datetime import time
@@ -71,7 +72,9 @@ async def test_stations_list_contract(api_client: AsyncClient, db_pool) -> None:
     assert isinstance(stations, list)
     assert len(stations) >= 1
 
-    target = next((s for s in stations if s.get("station_id") == "contract-list-001"), None)
+    target = next(
+        (s for s in stations if s.get("station_id") == "contract-list-001"), None
+    )
     assert target is not None, "Seeded station missing from response"
     _assert_fields(target, _STATION_FIELDS, "StationResponse")
 
@@ -84,7 +87,12 @@ async def test_station_detail_contract(api_client: AsyncClient, db_pool) -> None
             "INSERT INTO station_availability "
             "(station_id, day_of_week, time_slot, avg_bikes, avg_ebikes, sample_count) "
             "VALUES ($1, $2, $3, $4, $5, $6)",
-            station_id, 0, time(8, 0), 3.0, 1.0, 5,
+            station_id,
+            0,
+            time(8, 0),
+            3.0,
+            1.0,
+            5,
         )
 
     resp = await api_client.get(f"/api/v1/stations/{station_id}")
@@ -93,7 +101,9 @@ async def test_station_detail_contract(api_client: AsyncClient, db_pool) -> None
 
     _assert_fields(data, _STATION_DETAIL_FIELDS, "StationDetailResponse")
     assert len(data["availability"]) >= 1
-    _assert_fields(data["availability"][0], _AVAILABILITY_SLOT_FIELDS, "AvailabilitySlot")
+    _assert_fields(
+        data["availability"][0], _AVAILABILITY_SLOT_FIELDS, "AvailabilitySlot"
+    )
 
 
 async def test_nearby_stations_contract(api_client: AsyncClient, db_pool) -> None:
@@ -107,7 +117,9 @@ async def test_nearby_stations_contract(api_client: AsyncClient, db_pool) -> Non
     stations = resp.json()
     assert isinstance(stations, list)
 
-    target = next((s for s in stations if s.get("station_id") == "contract-nearby-001"), None)
+    target = next(
+        (s for s in stations if s.get("station_id") == "contract-nearby-001"), None
+    )
     assert target is not None, "Seeded nearby station missing from response"
     _assert_fields(target, _NEARBY_STATION_FIELDS, "NearbyStationResponse")
 

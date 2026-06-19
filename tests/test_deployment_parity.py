@@ -5,6 +5,7 @@ Guards the three classes of bug that caused production failures:
 - Alembic migration chain consistency (migration recorded but table missing)
 - Cookie/CORS attributes under production env config (issue #24)
 """
+
 from __future__ import annotations
 
 import importlib
@@ -31,7 +32,9 @@ async def test_asyncpg_pool_statement_cache_size_zero() -> None:
     import app.db as db_mod
 
     mock_pool = MagicMock()
-    with patch.object(asyncpg, "create_pool", new=AsyncMock(return_value=mock_pool)) as mock_create:
+    with patch.object(
+        asyncpg, "create_pool", new=AsyncMock(return_value=mock_pool)
+    ) as mock_create:
         await db_mod.create_pool("postgresql://localhost/testdb")
 
     call_kwargs = mock_create.call_args.kwargs
@@ -50,8 +53,12 @@ def test_sqlalchemy_engine_statement_cache_size_zero() -> None:
     mock_engine = MagicMock()
     mock_session = MagicMock()
 
-    with patch("sqlalchemy.ext.asyncio.create_async_engine", return_value=mock_engine) as mock_create, \
-         patch("sqlalchemy.ext.asyncio.async_sessionmaker", return_value=mock_session):
+    with (
+        patch(
+            "sqlalchemy.ext.asyncio.create_async_engine", return_value=mock_engine
+        ) as mock_create,
+        patch("sqlalchemy.ext.asyncio.async_sessionmaker", return_value=mock_session),
+    ):
         importlib.reload(auth_db_mod)
 
     auth_db_mod.engine = original_engine
@@ -162,8 +169,12 @@ async def test_cookie_attributes_in_production_response(
         assert set_cookie, "No Set-Cookie header in login response"
         lowered = set_cookie.lower()
         assert "httponly" in lowered, f"HttpOnly missing in Set-Cookie: {set_cookie}"
-        assert "samesite=lax" in lowered, f"SameSite=Lax missing in Set-Cookie: {set_cookie}"
-        assert "secure" in lowered, f"Secure missing in Set-Cookie (production config): {set_cookie}"
+        assert "samesite=lax" in lowered, (
+            f"SameSite=Lax missing in Set-Cookie: {set_cookie}"
+        )
+        assert "secure" in lowered, (
+            f"Secure missing in Set-Cookie (production config): {set_cookie}"
+        )
         assert "path=/" in lowered, f"Path=/ missing in Set-Cookie: {set_cookie}"
     finally:
         cookie_transport.cookie_secure = original_secure
@@ -192,11 +203,15 @@ async def cors_production_client() -> AsyncGenerator[AsyncClient, None]:
     async def ping() -> dict:
         return {"ok": True}
 
-    async with AsyncClient(transport=ASGITransport(app=mini_app), base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=mini_app), base_url="http://test"
+    ) as client:
         yield client
 
 
-async def test_cors_production_origin_allowed(cors_production_client: AsyncClient) -> None:
+async def test_cors_production_origin_allowed(
+    cors_production_client: AsyncClient,
+) -> None:
     resp = await cors_production_client.options(
         "/ping",
         headers={
@@ -208,7 +223,9 @@ async def test_cors_production_origin_allowed(cors_production_client: AsyncClien
     assert resp.headers.get("access-control-allow-credentials") == "true"
 
 
-async def test_cors_unauthorized_origin_rejected(cors_production_client: AsyncClient) -> None:
+async def test_cors_unauthorized_origin_rejected(
+    cors_production_client: AsyncClient,
+) -> None:
     resp = await cors_production_client.options(
         "/ping",
         headers={

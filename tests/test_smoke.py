@@ -82,7 +82,9 @@ async def test_smoke_authenticated_access(smoke_client: httpx.AsyncClient) -> No
         "/api/v1/users/me",
         headers={"Cookie": _smoke_cookie},
     )
-    assert resp.status_code == 200, f"/users/me returned {resp.status_code}: {resp.text}"
+    assert resp.status_code == 200, (
+        f"/users/me returned {resp.status_code}: {resp.text}"
+    )
     data = resp.json()
     assert "email" in data, f"/users/me response missing 'email': {data}"
     assert data["email"] == _smoke_email
@@ -112,7 +114,9 @@ async def test_smoke_stations(smoke_client: httpx.AsyncClient) -> None:
 
 async def test_smoke_station_detail(smoke_client: httpx.AsyncClient) -> None:
     list_resp = await smoke_client.get("/api/v1/stations")
-    assert list_resp.status_code == 200, f"Stations list returned {list_resp.status_code}"
+    assert list_resp.status_code == 200, (
+        f"Stations list returned {list_resp.status_code}"
+    )
     stations = list_resp.json()
     assert len(stations) > 0, "No stations returned — cannot test station detail"
     station_id = stations[0]["station_id"]
@@ -140,6 +144,4 @@ async def test_smoke_cors_preflight(smoke_client: httpx.AsyncClient) -> None:
     assert "dailymevo.pl" in acao, (
         f"CORS allow-origin missing dailymevo.pl: '{acao}' (status {resp.status_code})"
     )
-    assert acac.lower() == "true", (
-        f"CORS allow-credentials not 'true': '{acac}'"
-    )
+    assert acac.lower() == "true", f"CORS allow-credentials not 'true': '{acac}'"
