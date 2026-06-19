@@ -129,6 +129,6 @@ jobs:
           exit 1
 
       - name: Run smoke tests
-        run: uv run pytest -m smoke -v
+        run: uv run pytest tests/test_smoke.py -v
         env:
           MEVO_SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
