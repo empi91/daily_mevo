@@ -80,3 +80,54 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Deploy to Mikr.us
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.MIKRUS_SERVER }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.MIKRUS_SSH_PORT }}
+          script: |
+            docker tag app-app:latest app-app:prev 2>/dev/null || echo 'No existing image to tag'
+            cd /app && git pull
+            cd /app && docker compose build
+            cd /app && docker compose up -d
+
+      - name: Wait for health check
+        run: |
+          echo "Waiting for deployment to be healthy..."
+          for i in $(seq 1 18); do
+            sleep 5
+            HEALTH=$(curl -sf "${{ secrets.SMOKE_BASE_URL }}/health" 2>/dev/null || echo "")
+            if echo "$HEALTH" | grep -q '"status":"ok"'; then
+              echo "Health check passed!"
+              echo "$HEALTH"
+              exit 0
+            fi
+            echo "Attempt $i/18 — not healthy yet..."
+          done
+          echo "Health check failed after 90s!"
+          exit 1
+
+      - name: Run smoke tests
+        run: uv run pytest -m smoke -v
+        env:
+          MEVO_SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
