@@ -47,6 +47,7 @@ jobs:
       - name: Run tests
         run: uv run pytest -v
         env:
+          MEVO_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
           MEVO_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
           MEVO_JWT_SECRET: ci-test-secret
 
