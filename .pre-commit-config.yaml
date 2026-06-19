@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.16
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: related-tests
+        name: Run tests related to staged files
+        entry: scripts/run-related-tests.sh
+        language: script
+        pass_filenames: true
+        types: [file]
