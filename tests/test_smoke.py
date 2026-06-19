@@ -11,6 +11,20 @@ pytestmark = [pytest.mark.smoke, pytest.mark.asyncio(loop_scope="session")]
 BASE_URL = os.environ.get("MEVO_SMOKE_BASE_URL", "http://localhost:8000")
 
 
+def _server_reachable() -> bool:
+    try:
+        resp = httpx.get(f"{BASE_URL}/health", timeout=3.0)
+        return resp.status_code == 200
+    except (httpx.ConnectError, httpx.TimeoutException):
+        return False
+
+
+@pytest.fixture(autouse=True)
+def _skip_if_no_server() -> None:
+    if not _server_reachable():
+        pytest.skip(f"Smoke server not reachable at {BASE_URL}")
+
+
 @pytest.fixture
 def smoke_client() -> httpx.AsyncClient:
     return httpx.AsyncClient(base_url=BASE_URL, timeout=5.0)
