@@ -460,13 +460,13 @@ Locators: `getByRole`, `getByLabel`, `getByText` — never CSS selectors or XPat
 
 #### Automated
 
-- [x] 4.1 Playwright installs successfully
-- [x] 4.2 E2E tests pass locally
-- [x] 4.3 No lint errors in test files
-- [x] 4.4 Existing tests unaffected
+- [x] 4.1 Playwright installs successfully — 733a52a
+- [x] 4.2 E2E tests pass locally — 733a52a
+- [x] 4.3 No lint errors in test files — 733a52a
+- [x] 4.4 Existing tests unaffected — 733a52a
 
 #### Manual
 
-- [x] 4.5 Auth cookie round-trip demonstrates full login lifecycle
-- [x] 4.6 Cookie attribute assertions match production expectations
-- [x] 4.7 Tests follow E2E best practices (no waitForTimeout, accessible locators)
+- [x] 4.5 Auth cookie round-trip demonstrates full login lifecycle — 733a52a
+- [x] 4.6 Cookie attribute assertions match production expectations — 733a52a
+- [x] 4.7 Tests follow E2E best practices (no waitForTimeout, accessible locators) — 733a52a
