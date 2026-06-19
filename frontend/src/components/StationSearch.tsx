@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { geocodeAddress, fetchNearbyStations } from '../api/stations'
 import type { StationResponse, NearbyStationResponse } from '../api/stations'
@@ -52,30 +52,18 @@ export default function StationSearch({ stations }: { stations: StationResponse[
     }
   }, [])
 
+  const trimmed = query.trim()
+  const localResults = useMemo(() => localFilter(trimmed), [localFilter, trimmed])
+  const needsGeocode = trimmed.length >= 3 && localResults.length === 0
+
+  const displayResults = useMemo(() => {
+    if (trimmed.length === 0) return []
+    if (localResults.length > 0) return localResults
+    return results
+  }, [trimmed, localResults, results])
+
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-
-    const trimmed = query.trim()
-    if (trimmed.length === 0) {
-      setResults([])
-      setError(null)
-      setLoading(false)
-      return
-    }
-
-    const local = localFilter(trimmed)
-    if (local.length > 0) {
-      setResults(local)
-      setError(null)
-      setLoading(false)
-      return
-    }
-
-    if (trimmed.length < 3) {
-      setResults([])
-      setError(null)
-      return
-    }
+    if (!needsGeocode) return
 
     debounceRef.current = setTimeout(() => {
       searchAddress(trimmed)
@@ -84,7 +72,7 @@ export default function StationSearch({ stations }: { stations: StationResponse[
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query, localFilter, searchAddress])
+  }, [needsGeocode, trimmed, searchAddress])
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && query.trim().length >= 3) {
@@ -107,21 +95,21 @@ export default function StationSearch({ stations }: { stations: StationResponse[
         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
       />
 
-      {loading && (
+      {needsGeocode && loading && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-gray-500">
           Szukam...
         </div>
       )}
 
-      {error && (
+      {needsGeocode && error && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-red-600">
           {error}
         </div>
       )}
 
-      {!loading && !error && results.length > 0 && (
+      {!loading && !error && displayResults.length > 0 && (
         <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
-          {results.map(r => {
+          {displayResults.map(r => {
             const s = r.kind === 'nearby' ? r.station : r.station
             return (
               <li key={s.station_id}>
@@ -149,7 +137,7 @@ export default function StationSearch({ stations }: { stations: StationResponse[
         </ul>
       )}
 
-      {!loading && !error && query.trim().length > 0 && results.length === 0 && query.trim().length >= 3 && (
+      {needsGeocode && !loading && !error && displayResults.length === 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-gray-500">
           Brak wyników dla „{query}" — szukam adresu...
         </div>
