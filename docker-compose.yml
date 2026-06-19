@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    # MIKRUS_APP_PORT must be set in production .env; deploy.sh and rollback.sh hardcode port 20312
     ports:
       - "${MIKRUS_APP_PORT:-20000}:8000"
     env_file:

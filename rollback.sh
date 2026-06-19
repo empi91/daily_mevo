@@ -4,31 +4,31 @@ set -euo pipefail
 IMAGE="app-app"
 
 echo "==> Checking for previous image..."
-HAS_PREV=$(ssh mikrus "docker image inspect ${IMAGE}:prev > /dev/null 2>&1 && echo yes || echo no")
-
-if [ "$HAS_PREV" = "no" ]; then
+if ! docker image inspect ${IMAGE}:prev > /dev/null 2>&1; then
     echo "==> No :prev image found. Nothing to roll back to."
     exit 1
 fi
 
 echo "==> Stopping current container..."
-ssh mikrus "cd /app && docker compose down"
+cd /app && docker compose down
 
 echo "==> Restoring previous image..."
-ssh mikrus "docker tag ${IMAGE}:prev ${IMAGE}:latest"
+docker tag ${IMAGE}:prev ${IMAGE}:latest
 
 echo "==> Starting rolled-back container..."
-ssh mikrus "cd /app && docker compose up -d"
+cd /app && docker compose up -d
 
-echo "==> Waiting for health check..."
-sleep 10
+echo "==> Waiting for health check (up to 90s)..."
+for i in $(seq 1 18); do
+    sleep 5
+    HEALTH=$(curl -sf http://localhost:20312/health 2>/dev/null || echo "")
+    if echo "$HEALTH" | grep -q '"status":"ok"'; then
+        echo "==> Rollback successful!"
+        echo "$HEALTH"
+        exit 0
+    fi
+    echo "Attempt $i/18 — not healthy yet..."
+done
 
-HEALTH=$(ssh mikrus "curl -sf http://localhost:20312/health" 2>/dev/null || echo "FAILED")
-
-if echo "$HEALTH" | grep -q '"status":"ok"'; then
-    echo "==> Rollback successful!"
-    echo "$HEALTH"
-else
-    echo "==> Health check failed after rollback! Response: $HEALTH"
-    exit 1
-fi
+echo "==> Health check failed after rollback!"
+exit 1
