@@ -1,4 +1,5 @@
-from datetime import datetime, time, timezone
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
@@ -9,9 +10,12 @@ from app.auth.models import User
 
 router = APIRouter(tags=["favourites"])
 
+WARSAW = ZoneInfo("Europe/Warsaw")
 
-def _current_slot() -> tuple[int, time]:
-    now = datetime.now(timezone.utc)
+
+def _current_slot(now: datetime | None = None) -> tuple[int, time]:
+    if now is None:
+        now = datetime.now(WARSAW)
     day_of_week = now.weekday()
     minute_slot = (now.minute // 15) * 15
     time_slot = time(now.hour, minute_slot)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, time, timezone
+from zoneinfo import ZoneInfo
 
 import asyncpg
 import pytest
@@ -36,7 +37,7 @@ async def _ensure_station(
 async def _insert_availability_for_current_slot(
     conn: asyncpg.Connection, station_id: str = STATION_ID
 ) -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(ZoneInfo("Europe/Warsaw"))
     day_of_week = now.weekday()
     minute_slot = (now.minute // 15) * 15
     time_slot = time(now.hour, minute_slot)
