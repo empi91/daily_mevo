@@ -50,3 +50,11 @@ export async function apiPost(path: string): Promise<void> {
   })
   if (!response.ok) await throwApiError(response)
 }
+
+export async function apiDelete(path: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!response.ok) await throwApiError(response)
+}

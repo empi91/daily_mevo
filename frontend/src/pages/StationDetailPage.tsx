@@ -6,6 +6,7 @@ import AvailabilityHeatmap from '../components/AvailabilityHeatmap'
 import DayOfWeekTabs from '../components/DayOfWeekTabs'
 import DayPartDetail from '../components/DayPartDetail'
 import EmptyState from '../components/EmptyState'
+import FavouriteToggleButton from '../components/FavouriteToggleButton'
 
 const MIN_SAMPLE_COUNT = 1
 
@@ -71,7 +72,10 @@ export default function StationDetailPage() {
 
       {/* Station metadata */}
       <div className="mt-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">{station.name}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-gray-900">{station.name}</h1>
+          <FavouriteToggleButton stationId={station.station_id} />
+        </div>
         <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
           <span>ID: {station.station_id}</span>
           {station.address && <span>· {station.address}</span>}
