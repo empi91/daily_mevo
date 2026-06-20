@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, time, timezone
-from zoneinfo import ZoneInfo
+from datetime import datetime, timezone
 
 import asyncpg
 import pytest
 from httpx import AsyncClient
 
+from app.api.favourites import _current_slot
 from tests.conftest import insert_test_snapshots
 from tests.test_auth import _cookie_header, _register_and_login
 
@@ -37,10 +37,7 @@ async def _ensure_station(
 async def _insert_availability_for_current_slot(
     conn: asyncpg.Connection, station_id: str = STATION_ID
 ) -> None:
-    now = datetime.now(ZoneInfo("Europe/Warsaw"))
-    day_of_week = now.weekday()
-    minute_slot = (now.minute // 15) * 15
-    time_slot = time(now.hour, minute_slot)
+    day_of_week, time_slot = _current_slot()
     await conn.execute(
         """
         INSERT INTO station_availability (station_id, day_of_week, time_slot, avg_bikes, avg_ebikes, sample_count)
