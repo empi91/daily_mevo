@@ -22,22 +22,34 @@ test('AvailabilityHeatmap renders 7 day rows', () => {
   }
 })
 
-test('AvailabilityHeatmap cells with reliable data have bg-green-500', () => {
+test('AvailabilityHeatmap cells with 7-9 total have bg-lime-400', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/06:00 — śr\. 8 rowerów/)
-  expect(cell.className).toContain('bg-green-500')
+  expect(cell.className).toContain('bg-lime-400')
 })
 
-test('AvailabilityHeatmap cells with uncertain data have bg-yellow-400', () => {
+test('AvailabilityHeatmap cells with 2-3 total have bg-orange-400', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/08:00 — śr\. 3 rowery/)
-  expect(cell.className).toContain('bg-yellow-400')
+  expect(cell.className).toContain('bg-orange-400')
 })
 
-test('AvailabilityHeatmap cells with empty data have bg-red-500', () => {
+test('AvailabilityHeatmap cells with 0-1 total have bg-red-500', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/12:00 — śr\. 1 rower/)
   expect(cell.className).toContain('bg-red-500')
+})
+
+test('AvailabilityHeatmap cells with 4-6 total have bg-yellow-400', () => {
+  renderHeatmap()
+  const cell = screen.getByTitle(/09:00 — śr\. 5 rowerów/)
+  expect(cell.className).toContain('bg-yellow-400')
+})
+
+test('AvailabilityHeatmap cells with 10+ total have bg-green-500', () => {
+  renderHeatmap()
+  const cell = screen.getByTitle(/14:00 — śr\. 12 rowerów/)
+  expect(cell.className).toContain('bg-green-500')
 })
 
 test('AvailabilityHeatmap cells with no data have bg-gray-200', () => {
@@ -73,9 +85,11 @@ test('AvailabilityHeatmap renders hour labels from 5:00 to 22:00', () => {
 
 test('AvailabilityHeatmap legend text is present', () => {
   renderHeatmap()
-  expect(screen.getByText(/≥6 rowerów łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/2–5 rowerów łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/≤1 rower łącznie/)).toBeInTheDocument()
+  expect(screen.getByText(/≥10 rowerów łącznie/)).toBeInTheDocument()
+  expect(screen.getByText(/7–9 rowerów łącznie/)).toBeInTheDocument()
+  expect(screen.getByText(/4–6 rowerów łącznie/)).toBeInTheDocument()
+  expect(screen.getByText(/2–3 rowery łącznie/)).toBeInTheDocument()
+  expect(screen.getByText(/0–1 rower łącznie/)).toBeInTheDocument()
   expect(screen.getByText(/brak danych/)).toBeInTheDocument()
 })
 
