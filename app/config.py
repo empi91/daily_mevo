@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     environment: str = "development"
-    app_version: str = "1.4.0"
+    app_version: str = "2.0.0"
     database_url: str
     supabase_url: str | None = None
     supabase_anon_key: str | None = None
