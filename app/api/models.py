@@ -39,6 +39,18 @@ class NearbyStationResponse(BaseModel):
     distance_m: int
 
 
+class FavouriteStationResponse(BaseModel):
+    station_id: str
+    name: str
+    address: str | None
+    lat: float
+    lon: float
+    capacity: int | None
+    avg_bikes: float | None
+    avg_ebikes: float | None
+    reliability_label: str | None
+
+
 class GeocodeResponse(BaseModel):
     lat: float
     lon: float
