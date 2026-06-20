@@ -15,7 +15,9 @@ STATION_ID = "7694"
 STATION_ID_2 = "7661"
 
 
-async def _ensure_station(conn: asyncpg.Connection, station_id: str = STATION_ID) -> None:
+async def _ensure_station(
+    conn: asyncpg.Connection, station_id: str = STATION_ID
+) -> None:
     await insert_test_snapshots(
         conn,
         station_id,
@@ -54,9 +56,7 @@ async def _insert_availability_for_current_slot(
     )
 
 
-async def test_add_favourite(
-    api_client: AsyncClient, db_pool: asyncpg.Pool
-) -> None:
+async def test_add_favourite(api_client: AsyncClient, db_pool: asyncpg.Pool) -> None:
     async with db_pool.acquire() as conn:
         await _ensure_station(conn)
     cookie = await _register_and_login(api_client, email="fav-add@example.com")
@@ -145,9 +145,7 @@ async def test_list_favourites_no_availability_data(
     assert data[0]["reliability_label"] is None
 
 
-async def test_remove_favourite(
-    api_client: AsyncClient, db_pool: asyncpg.Pool
-) -> None:
+async def test_remove_favourite(api_client: AsyncClient, db_pool: asyncpg.Pool) -> None:
     async with db_pool.acquire() as conn:
         await _ensure_station(conn)
     cookie = await _register_and_login(api_client, email="fav-remove@example.com")

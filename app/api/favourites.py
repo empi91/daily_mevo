@@ -48,7 +48,11 @@ async def list_favourites(
         avg_bikes = r["avg_bikes"]
         avg_ebikes = r["avg_ebikes"]
         sample_count = r["sample_count"]
-        if avg_bikes is not None and avg_ebikes is not None and sample_count is not None:
+        if (
+            avg_bikes is not None
+            and avg_ebikes is not None
+            and sample_count is not None
+        ):
             label = _reliability_label(avg_bikes + avg_ebikes, sample_count)
         else:
             label = None

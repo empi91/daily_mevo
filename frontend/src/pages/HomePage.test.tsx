@@ -74,7 +74,7 @@ test('shows "Popularne stacje" when not authenticated', async () => {
 })
 
 test('shows "Twoje ulubione stacje" when authenticated with favourites', () => {
-  mockDefaults({ isAuthenticated: true, user: { id: '1', email: 'test@test.com' } }, [testFavourite])
+  mockDefaults({ isAuthenticated: true, user: { id: '1', email: 'test@test.com', is_active: true, is_superuser: false, is_verified: true } }, [testFavourite])
   renderWithProviders(<HomePage />)
 
   expect(screen.getByText('Twoje ulubione stacje')).toBeInTheDocument()
@@ -82,7 +82,7 @@ test('shows "Twoje ulubione stacje" when authenticated with favourites', () => {
 })
 
 test('falls back to "Popularne stacje" when authenticated with no favourites', async () => {
-  mockDefaults({ isAuthenticated: true, user: { id: '1', email: 'test@test.com' } }, [])
+  mockDefaults({ isAuthenticated: true, user: { id: '1', email: 'test@test.com', is_active: true, is_superuser: false, is_verified: true } }, [])
   renderWithProviders(<HomePage />)
 
   expect(await screen.findByText('Popularne stacje')).toBeInTheDocument()

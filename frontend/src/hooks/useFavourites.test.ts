@@ -24,7 +24,7 @@ function createWrapper() {
 
 function mockAuth(isAuthenticated: boolean) {
   mockedUseAuth.mockReturnValue({
-    user: isAuthenticated ? { id: '1', email: 'test@test.com' } : null,
+    user: isAuthenticated ? { id: '1', email: 'test@test.com', is_active: true, is_superuser: false, is_verified: true } : null,
     isLoading: false,
     isAuthenticated,
     loginMutation: {} as ReturnType<typeof useAuth>['loginMutation'],
