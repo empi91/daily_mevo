@@ -21,11 +21,11 @@ async function navigateToFirstStation(page: import('@playwright/test').Page) {
   await expect(popularSection).toBeVisible()
   const firstStationLink = page.getByRole('link').filter({ hasText: /^[A-Z]{3}\d{3}/ }).first()
   await expect(firstStationLink).toBeVisible()
-  const nameSpan = firstStationLink.locator('span').first()
-  const stationName = await nameSpan.textContent()
+  const linkText = await firstStationLink.textContent()
+  const stationName = linkText!.match(/^[A-Z]{3}\d{3}/)![0]
   await firstStationLink.click()
   await expect(page).toHaveURL(/\/stations\//)
-  return stationName!.trim()
+  return stationName
 }
 
 test.describe('favourites lifecycle', () => {
