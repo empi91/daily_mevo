@@ -20,6 +20,9 @@ export default function FavouriteStations() {
   return (
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-3">Twoje ulubione stacje</h2>
+      {removeMutation.isError && (
+        <p className="text-sm text-red-500 mb-2">Nie udało się usunąć stacji. Spróbuj ponownie.</p>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {favourites.map((station) => (
           <div key={station.station_id} className="relative">
@@ -41,7 +44,7 @@ export default function FavouriteStations() {
                 e.stopPropagation()
                 removeMutation.mutate(station.station_id)
               }}
-              disabled={removeMutation.isPending}
+              disabled={removeMutation.isPending && removeMutation.variables === station.station_id}
               aria-label={`Usuń ${station.name} z ulubionych`}
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors text-sm leading-none p-1"
             >
