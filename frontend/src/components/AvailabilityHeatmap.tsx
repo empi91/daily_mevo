@@ -13,21 +13,17 @@ function slotIndex(timeSlot: string): number | null {
   return (h - START_HOUR) * SLOTS_PER_HOUR + Math.floor(m / 15)
 }
 
-function cellColor(label: string): string {
-  switch (label) {
-    case 'reliable':
-      return 'bg-green-500'
-    case 'uncertain':
-      return 'bg-yellow-400'
-    case 'empty':
-      return 'bg-red-500'
-    default:
-      return 'bg-gray-200'
-  }
+function cellColor(total: number, sampleCount: number): string {
+  if (sampleCount < 1) return 'bg-gray-200'
+  if (total <= 1) return 'bg-red-500'
+  if (total <= 3) return 'bg-orange-400'
+  if (total <= 6) return 'bg-yellow-400'
+  if (total <= 9) return 'bg-lime-400'
+  return 'bg-green-500'
 }
 
 function cellTitle(slot: AvailabilitySlot | undefined, time: string): string {
-  if (!slot || slot.reliability_label === 'insufficient_data') {
+  if (!slot || slot.sample_count < 1) {
     return `${time} — brak danych`
   }
   const total = Math.round(slot.avg_bikes + slot.avg_ebikes)
@@ -90,7 +86,7 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
                 return (
                   <div
                     key={slotIdx}
-                    className={`h-6 flex-1 rounded-sm ${cellColor(slot?.reliability_label ?? 'insufficient_data')}`}
+                    className={`h-6 flex-1 rounded-sm ${cellColor((slot?.avg_bikes ?? 0) + (slot?.avg_ebikes ?? 0), slot?.sample_count ?? 0)}`}
                     title={cellTitle(slot, timeStr)}
                   />
                 )
@@ -102,13 +98,19 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 ml-10 text-xs text-gray-600">
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≥6 rowerów łącznie
+            <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≥10 rowerów łącznie
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-yellow-400" /> 2–5 rowerów łącznie
+            <span className="inline-block w-3 h-3 rounded-sm bg-lime-400" /> 7–9 rowerów łącznie
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> ≤1 rower łącznie
+            <span className="inline-block w-3 h-3 rounded-sm bg-yellow-400" /> 4–6 rowerów łącznie
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-sm bg-orange-400" /> 2–3 rowery łącznie
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> 0–1 rower łącznie
           </span>
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-sm bg-gray-200" /> brak danych
