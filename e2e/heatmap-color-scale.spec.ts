@@ -11,35 +11,26 @@ test.describe('heatmap color scale — 5-tier verification', () => {
     await expect(page.getByText('brak danych')).toBeVisible()
   })
 
-  test('heatmap cells render with color classes', async ({ page }) => {
+  test('gray cells have bg-gray-200 and title containing brak danych', async ({ page }) => {
     await page.goto('/stations/3829')
-    const heatmapCell = page.locator('[class*="h-6 flex-1 rounded-sm"]').first()
-    await expect(heatmapCell).toBeVisible()
-    const classAttr = await heatmapCell.getAttribute('class')
-    expect(classAttr).toMatch(/bg-(gray-200|red-500|orange-400|yellow-400|lime-400|green-500)/)
-  })
-
-  test('gray cells tooltip says brak danych', async ({ page }) => {
-    await page.goto('/stations/3829')
-    // Target heatmap cells (h-6) with gray colour, not legend swatches (w-3 h-3)
-    const grayCell = page.locator('div[class*="h-6"][class*="bg-gray-200"]').first()
+    const grayCell = page.locator('[title*="brak danych"]').first()
     const count = await grayCell.count()
-    if (count > 0) {
-      const title = await grayCell.getAttribute('title')
-      expect(title).toMatch(/brak danych/)
+    if (count === 0) {
+      test.skip()
+      return
     }
+    await expect(grayCell).toBeVisible()
+    const classAttr = await grayCell.getAttribute('class')
+    expect(classAttr).toContain('bg-gray-200')
   })
 
-  test('coloured cells tooltip shows bike count', async ({ page }) => {
+  test('coloured cells have a colour class and title showing bike count', async ({ page }) => {
     await page.goto('/stations/3829')
-    const colouredCell = page
-      .locator('[class*="h-6 flex-1 rounded-sm"]')
-      .filter({ hasNot: page.locator('[class*="bg-gray-200"]') })
-      .first()
-    const count = await colouredCell.count()
-    if (count > 0) {
-      const title = await colouredCell.getAttribute('title')
-      expect(title).toMatch(/śr\. \d+ rower/)
-    }
+    const colouredCell = page.locator('[title*="śr."]').first()
+    await expect(colouredCell).toBeVisible()
+    const title = await colouredCell.getAttribute('title')
+    expect(title).toMatch(/śr\. \d+ rower/)
+    const classAttr = await colouredCell.getAttribute('class')
+    expect(classAttr).toMatch(/bg-(red-500|orange-400|yellow-400|lime-400|green-500)/)
   })
 })

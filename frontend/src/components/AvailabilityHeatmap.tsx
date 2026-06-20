@@ -86,7 +86,7 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
                 return (
                   <div
                     key={slotIdx}
-                    className={`h-6 flex-1 rounded-sm ${cellColor((slot?.avg_bikes ?? 0) + (slot?.avg_ebikes ?? 0), slot?.sample_count ?? 0)}`}
+                    className={`h-6 flex-1 rounded-sm ${cellColor(Math.round((slot?.avg_bikes ?? 0) + (slot?.avg_ebikes ?? 0)), slot?.sample_count ?? 0)}`}
                     title={cellTitle(slot, timeStr)}
                   />
                 )
