@@ -7,10 +7,11 @@ from app.api.models import FavouriteStationResponse
 from app.api.stations import _get_pool, _reliability_label
 from app.auth.config import current_active_user
 from app.auth.models import User
+from app.config import WARSAW_TZ
 
 router = APIRouter(tags=["favourites"])
 
-WARSAW = ZoneInfo("Europe/Warsaw")
+WARSAW = ZoneInfo(WARSAW_TZ)
 
 
 def _current_slot(now: datetime | None = None) -> tuple[int, time]:

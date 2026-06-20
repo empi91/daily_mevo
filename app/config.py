@@ -28,3 +28,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()  # type: ignore[call-arg]
+
+WARSAW_TZ = "Europe/Warsaw"

@@ -1,9 +1,9 @@
 import asyncpg
 import structlog
 
-logger = structlog.stdlib.get_logger()
+from app.config import WARSAW_TZ
 
-LOCAL_TZ = "Europe/Warsaw"
+logger = structlog.stdlib.get_logger()
 
 
 async def aggregate_availability(pool: asyncpg.Pool) -> int:
@@ -49,7 +49,7 @@ async def aggregate_availability(pool: asyncpg.Pool) -> int:
                         station_id,
                         bikes_available,
                         ebikes_available,
-                        (collected_at AT TIME ZONE '{LOCAL_TZ}') AS local_ts
+                        (collected_at AT TIME ZONE '{WARSAW_TZ}') AS local_ts
                     FROM snapshots
                     WHERE id > $1
                 ) s
