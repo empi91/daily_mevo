@@ -2,12 +2,19 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchStations } from '../api/stations'
 import StationSearch from '../components/StationSearch'
 import PopularStations from '../components/PopularStations'
+import FavouriteStations from '../components/FavouriteStations'
+import { useAuth } from '../hooks/useAuth'
+import { useFavourites } from '../hooks/useFavourites'
 
 export default function HomePage() {
   const { data: stations = [] } = useQuery({
     queryKey: ['stations'],
     queryFn: fetchStations,
   })
+  const { isAuthenticated } = useAuth()
+  const { favourites } = useFavourites()
+
+  const showFavourites = isAuthenticated && favourites.length > 0
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -22,7 +29,7 @@ export default function HomePage() {
         <StationSearch stations={stations} />
       </div>
 
-      <PopularStations />
+      {showFavourites ? <FavouriteStations /> : <PopularStations />}
     </div>
   )
 }
