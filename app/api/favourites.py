@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
@@ -10,11 +10,11 @@ from app.auth.models import User
 router = APIRouter(tags=["favourites"])
 
 
-def _current_slot() -> tuple[int, str]:
+def _current_slot() -> tuple[int, time]:
     now = datetime.now(timezone.utc)
     day_of_week = now.weekday()
     minute_slot = (now.minute // 15) * 15
-    time_slot = f"{now.hour:02d}:{minute_slot:02d}:00"
+    time_slot = time(now.hour, minute_slot)
     return day_of_week, time_slot
 
 
