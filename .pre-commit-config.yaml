@@ -14,3 +14,11 @@ repos:
         language: script
         pass_filenames: true
         types: [file]
+
+      - id: full-check
+        name: Run all CI checks before push
+        entry: scripts/check.sh
+        language: script
+        stages: [pre-push]
+        always_run: true
+        pass_filenames: false
