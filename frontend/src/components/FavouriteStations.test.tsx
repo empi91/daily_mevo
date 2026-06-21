@@ -70,7 +70,8 @@ test('renders availability data when available', () => {
   mockFavourites()
   renderWithProviders(<FavouriteStations />)
 
-  expect(screen.getByText(/≈ 5 rowerów \+ 3 e-rowery · Niezawodna/)).toBeInTheDocument()
+  expect(screen.getByText('3 rowery elektryczne')).toBeInTheDocument()
+  expect(screen.getByText('5 rowerów')).toBeInTheDocument()
 })
 
 test('shows "Brak danych" when availability fields are null', () => {

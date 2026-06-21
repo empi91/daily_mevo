@@ -1,21 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useFavourites } from '../hooks/useFavourites'
+import { bikesLabel, ebikesLabel } from '../polish'
 
 export default function FavouriteStations() {
   const { favourites, removeMutation } = useFavourites()
 
   if (favourites.length === 0) return null
-
-  function formatAvailability(avgBikes: number | null, avgEbikes: number | null, label: string | null) {
-    if (avgBikes === null || avgEbikes === null) return null
-    const bikes = Math.round(avgBikes)
-    const ebikes = Math.round(avgEbikes)
-    const parts = []
-    if (bikes > 0) parts.push(`${bikes} rower${bikes === 1 ? '' : bikes < 5 ? 'y' : 'ów'}`)
-    if (ebikes > 0) parts.push(`${ebikes} e-rower${ebikes === 1 ? '' : ebikes < 5 ? 'y' : 'ów'}`)
-    const availability = parts.length > 0 ? `≈ ${parts.join(' + ')}` : '≈ 0 rowerów'
-    return label ? `${availability} · ${label}` : availability
-  }
 
   return (
     <section>
@@ -28,15 +18,29 @@ export default function FavouriteStations() {
           <div key={station.station_id} className="relative">
             <Link
               to={`/stations/${station.station_id}`}
-              className="block p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all"
+              className="flex flex-col h-full p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all"
             >
               <span className="font-mono text-sm text-blue-600">{station.name}</span>
               {station.address && <p className="text-sm text-gray-500 mt-1">{station.address}</p>}
-              <p className="text-sm mt-2 text-gray-700">
-                {formatAvailability(station.avg_bikes, station.avg_ebikes, station.reliability_label) ?? (
-                  <span className="text-gray-400">Brak danych</span>
-                )}
-              </p>
+              {station.avg_bikes === null || station.avg_ebikes === null ? (
+                <p className="text-sm text-gray-400 mt-2">Brak danych</p>
+              ) : (
+                <div className="mt-2 text-sm text-gray-700">
+                  {(() => {
+                    const bikes = Math.round(station.avg_bikes)
+                    const ebikes = Math.round(station.avg_ebikes)
+                    if (ebikes === 0 && bikes === 0) {
+                      return <p className="text-gray-400">Brak rowerów</p>
+                    }
+                    return (
+                      <>
+                        {ebikes > 0 && <p>{ebikes} {ebikesLabel(ebikes)}</p>}
+                        {bikes > 0 && <p>{bikes} {bikesLabel(bikes)}</p>}
+                      </>
+                    )
+                  })()}
+                </div>
+              )}
             </Link>
             <button
               type="button"
