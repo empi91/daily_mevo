@@ -1,20 +1,7 @@
 import { useState } from 'react'
 import type { AvailabilitySlot } from '../api/stations'
 import { bikesLabel, ebikesLabel } from '../polish'
-
-interface DayPart {
-  name: string
-  range: string
-  startHour: number
-  endHour: number
-}
-
-const DAY_PARTS: DayPart[] = [
-  { name: 'Rano', range: '6–12', startHour: 6, endHour: 12 },
-  { name: 'Popołudnie', range: '12–18', startHour: 12, endHour: 18 },
-  { name: 'Wieczór', range: '18–22', startHour: 18, endHour: 22 },
-  { name: 'Noc', range: '22–6', startHour: 22, endHour: 30 },
-]
+import { type DayPart, DAY_PARTS, currentDayPartIndex } from './dayParts'
 
 function parseTime(timeSlot: string): number {
   const [h, m] = timeSlot.split(':').map(Number)
@@ -61,7 +48,7 @@ interface Props {
 }
 
 export default function DayPartDetail({ availability, selectedDay }: Props) {
-  const [expandedParts, setExpandedParts] = useState<Set<number>>(new Set([0]))
+  const [expandedParts, setExpandedParts] = useState<Set<number>>(() => new Set([currentDayPartIndex()]))
 
   const daySlots = availability
     .filter((s) => s.day_of_week === selectedDay)
