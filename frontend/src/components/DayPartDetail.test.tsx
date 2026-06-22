@@ -43,16 +43,22 @@ test('DayPartDetail clicking a collapsed section expands it', async () => {
 })
 
 test('DayPartDetail expanded section shows per-slot bike counts and reliability badge', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail()
   const badges = screen.getAllByText('dostępne')
   expect(badges.length).toBeGreaterThan(0)
   expect(screen.getByText('niepewne')).toBeInTheDocument()
+  vi.useRealTimers()
 })
 
 test('DayPartDetail reliability labels render correct Polish text', async () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail()
   expect(screen.getAllByText('dostępne').length).toBeGreaterThan(0)
   expect(screen.getByText('niepewne')).toBeInTheDocument()
+  vi.useRealTimers()
 
   const popButton = screen.getByText('Popołudnie').closest('button')!
   await userEvent.click(popButton)
@@ -71,10 +77,13 @@ test('DayPartDetail no data for a period shows empty message', () => {
 })
 
 test('DayPartDetail insufficient_data label renders as brak danych', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail(1)
   const ranoButton = screen.getByText('Rano').closest('button')!
   expect(ranoButton).toBeInTheDocument()
   expect(screen.getByText('brak danych')).toBeInTheDocument()
+  vi.useRealTimers()
 })
 
 describe('currentDayPartIndex', () => {
