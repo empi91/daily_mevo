@@ -26,6 +26,7 @@ export default function FavouriteStations() {
                 <p className="text-sm text-gray-400 mt-2">Brak danych</p>
               ) : (
                 <div className="mt-2 text-sm text-gray-700">
+                  <p>Statystycznie o tej godzinie:</p>
                   {(() => {
                     const bikes = Math.round(station.avg_bikes)
                     const ebikes = Math.round(station.avg_ebikes)
