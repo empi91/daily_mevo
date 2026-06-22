@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useFavourites } from '../hooks/useFavourites'
-import { bikesLabel, ebikesLabel } from '../polish'
+import { plainBikesLabel, ebikesLabel } from '../polish'
 
 export default function FavouriteStations() {
   const { favourites, removeMutation } = useFavourites()
@@ -36,7 +36,7 @@ export default function FavouriteStations() {
                     return (
                       <>
                         {ebikes > 0 && <p>{ebikes} {ebikesLabel(ebikes)}</p>}
-                        {bikes > 0 && <p>{bikes} {bikesLabel(bikes)}</p>}
+                        {bikes > 0 && <p>{bikes} {plainBikesLabel(bikes)}</p>}
                       </>
                     )
                   })()}

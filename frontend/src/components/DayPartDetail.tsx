@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { AvailabilitySlot } from '../api/stations'
-import { bikesLabel, ebikesLabel } from '../polish'
+import { bikesLabel, plainBikesLabel, ebikesLabel } from '../polish'
 import { type DayPart, DAY_PARTS, currentDayPartIndex } from './dayParts'
 
 function parseTime(timeSlot: string): number {
@@ -116,7 +116,7 @@ export default function DayPartDetail({ availability, selectedDay }: Props) {
                           </span>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-900">
-                              {bikes} {bikesLabel(bikes)} + {ebikes} {ebikesLabel(ebikes)}
+                              {bikes} {plainBikesLabel(bikes)} + {ebikes} {ebikesLabel(ebikes)}
                             </span>
                             <span className="text-xs text-gray-500">śr. {total}</span>
                             <span

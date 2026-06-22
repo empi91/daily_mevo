@@ -71,7 +71,7 @@ test('renders availability data when available', () => {
   renderWithProviders(<FavouriteStations />)
 
   expect(screen.getByText('3 rowery elektryczne')).toBeInTheDocument()
-  expect(screen.getByText('5 rowerów')).toBeInTheDocument()
+  expect(screen.getByText('5 rowerów zwykłych')).toBeInTheDocument()
 })
 
 test('shows "Brak danych" when availability fields are null', () => {

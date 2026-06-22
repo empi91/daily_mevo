@@ -10,6 +10,12 @@ const ROWER: PluralForms = {
   many: 'rowerów',
 }
 
+const ROWER_ZWYKLY: PluralForms = {
+  singular: 'rower zwykły',
+  few: 'rowery zwykłe',
+  many: 'rowerów zwykłych',
+}
+
 const ROWER_ELEKTRYCZNY: PluralForms = {
   singular: 'rower elektryczny',
   few: 'rowery elektryczne',
@@ -34,6 +40,10 @@ function pluralize(n: number, forms: PluralForms): string {
 
 export function bikesLabel(n: number): string {
   return pluralize(n, ROWER)
+}
+
+export function plainBikesLabel(n: number): string {
+  return pluralize(n, ROWER_ZWYKLY)
 }
 
 export function ebikesLabel(n: number): string {
