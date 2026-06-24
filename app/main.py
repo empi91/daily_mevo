@@ -168,6 +168,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             scheduler.start()
             app.state.scheduler = scheduler
 
+            if not settings.ntfy_topic:
+                logger.warning("ntfy alerting disabled — set MEVO_NTFY_TOPIC to enable")
+
             def _log_task_exception(t: asyncio.Task[None]) -> None:
                 if not t.cancelled() and t.exception():
                     logger.error("Startup task failed", exc_info=t.exception())
