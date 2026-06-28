@@ -77,7 +77,7 @@ def test_sqlalchemy_engine_statement_cache_size_zero() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_migration_head_is_008() -> None:
+def test_migration_head_is_009() -> None:
     from alembic.config import Config
     from alembic.script import ScriptDirectory
 
@@ -86,7 +86,7 @@ def test_migration_head_is_008() -> None:
     heads = script_dir.get_heads()
 
     assert len(heads) == 1, f"Expected single migration head (no branches); got {heads}"
-    assert heads[0] == "008", f"Expected head revision '008'; got '{heads[0]}'"
+    assert heads[0] == "009", f"Expected head revision '009'; got '{heads[0]}'"
 
 
 def test_migration_chain_is_linear() -> None:
@@ -97,8 +97,8 @@ def test_migration_chain_is_linear() -> None:
     script_dir = ScriptDirectory.from_config(cfg)
     revisions = list(script_dir.walk_revisions())
 
-    assert len(revisions) == 8, (
-        f"Expected 8 migration revisions (001–008); got {len(revisions)}: "
+    assert len(revisions) == 9, (
+        f"Expected 9 migration revisions (001–009); got {len(revisions)}: "
         f"{[r.revision for r in revisions]}"
     )
     # Verify every non-base revision has exactly one predecessor (linear chain)
