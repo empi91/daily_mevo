@@ -14,15 +14,21 @@ playwright-report/
 test-results/
 .playwright/
 
-# Markdown files (except README.md)
+# Markdown files (except README.md and context/)
 *.md
 !README.md
+!context/**/*.md
+!context/*.md
+
+# Sensitive docs
+context/**/SECRETS.md
+
+# macOS
+.DS_Store
 
 # Skills lock
 skills-lock.json
 
-# Context directory
-context/
 
 # =========================
 # Python core
