@@ -1,10 +1,10 @@
 ---
 change_id: verify-rls-security-alert
 title: Verify and resolve Supabase RLS security alert
-status: complete
+status: archived
 created: 2026-06-30
 updated: 2026-06-30
-archived_at: null
+archived_at: 2026-06-30T18:44:28Z
 ---
 
 ## Notes
