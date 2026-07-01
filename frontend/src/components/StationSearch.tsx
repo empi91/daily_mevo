@@ -85,48 +85,59 @@ export default function StationSearch({ stations }: { stations: StationResponse[
   }
 
   return (
-    <div className="relative">
-      <input
-        type="text"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Wpisz numer stacji, nazwę lub adres..."
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-      />
+    <div className="relative max-w-[560px] mx-auto">
+      <div className="relative">
+        <svg
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Wpisz nazwę lub adres stacji"
+          className="w-full pl-11 pr-4 py-3 border border-border rounded-full bg-surface text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+        />
+      </div>
 
       {needsGeocode && loading && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-gray-500">
+        <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-2xl shadow-lg px-4 py-3 text-muted">
           Szukam...
         </div>
       )}
 
       {needsGeocode && error && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-red-600">
+        <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-2xl shadow-lg px-4 py-3 text-red-500">
           {error}
         </div>
       )}
 
       {!loading && !error && displayResults.length > 0 && (
-        <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+        <ul className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-2xl shadow-lg max-h-80 overflow-y-auto">
           {displayResults.map(r => {
             const s = r.kind === 'nearby' ? r.station : r.station
             return (
               <li key={s.station_id}>
                 <Link
                   to={`/stations/${s.station_id}`}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-accent-soft transition-colors border-b border-border last:border-b-0"
                 >
                   <div>
-                    <span className="font-mono text-sm text-blue-600">{s.station_id}</span>
-                    <span className="mx-2 text-gray-400">·</span>
-                    <span className="text-gray-900">{s.name}</span>
+                    <span className="font-mono text-sm text-accent">{s.station_id}</span>
+                    <span className="mx-2 text-muted">·</span>
+                    <span className="text-text">{s.name}</span>
                     {s.address && (
-                      <p className="text-sm text-gray-500 mt-0.5">{s.address}</p>
+                      <p className="text-sm text-muted mt-0.5">{s.address}</p>
                     )}
                   </div>
                   {r.kind === 'nearby' && (
-                    <span className="text-sm text-gray-400 ml-4 whitespace-nowrap">
+                    <span className="text-sm text-muted ml-4 whitespace-nowrap">
                       {formatDistance(r.station.distance_m)}
                     </span>
                   )}
@@ -138,7 +149,7 @@ export default function StationSearch({ stations }: { stations: StationResponse[
       )}
 
       {needsGeocode && !loading && !error && displayResults.length === 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-gray-500">
+        <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-2xl shadow-lg px-4 py-3 text-muted">
           Brak wyników dla „{query}" — szukam adresu...
         </div>
       )}

@@ -12,6 +12,17 @@ vi.mock('../api/stations', async (importOriginal) => {
   return {
     ...actual,
     fetchStations: vi.fn(),
+    fetchPopularStations: vi.fn().mockResolvedValue([{
+      station_id: '4076',
+      name: 'Brama Wyżynna',
+      address: 'ul. Wały Jagiellońskie',
+      lat: 54.352,
+      lon: 18.6466,
+      capacity: 24,
+      avg_bikes: 5,
+      avg_ebikes: 3,
+      reliability_label: 'reliable',
+    }]),
   }
 })
 
@@ -62,7 +73,7 @@ test('HomePage renders the heading MevoStats', () => {
 test('HomePage renders the search input placeholder', () => {
   mockDefaults()
   renderWithProviders(<HomePage />)
-  expect(screen.getByPlaceholderText(/Wpisz numer stacji, nazwę lub adres/)).toBeInTheDocument()
+  expect(screen.getByPlaceholderText(/Wpisz nazwę lub adres stacji/)).toBeInTheDocument()
 })
 
 test('shows "Popularne stacje" when not authenticated', async () => {

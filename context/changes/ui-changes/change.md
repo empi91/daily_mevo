@@ -3,7 +3,7 @@ change_id: ui-changes
 title: UI changes
 status: implementing
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-01T15:21
 archived_at: null
 ---
 

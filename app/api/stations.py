@@ -1,14 +1,31 @@
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
+
 from fastapi import APIRouter, HTTPException, Query, Request
 
-from app.config import settings
+from app.config import WARSAW_TZ, settings
 from app.api.models import (
     AvailabilitySlot,
+    FavouriteStationResponse,
     NearbyStationResponse,
     StationDetailResponse,
     StationResponse,
 )
 
 router = APIRouter(tags=["stations"])
+
+WARSAW = ZoneInfo(WARSAW_TZ)
+
+POPULAR_STATION_IDS = ["4076", "3839", "4192", "4345", "4353", "3829"]
+
+
+def _current_slot(now: datetime | None = None) -> tuple[int, time]:
+    if now is None:
+        now = datetime.now(WARSAW)
+    day_of_week = now.weekday()
+    minute_slot = (now.minute // 15) * 15
+    time_slot = time(now.hour, minute_slot)
+    return day_of_week, time_slot
 
 
 def _get_pool(request: Request):  # type: ignore[no-untyped-def]
@@ -66,6 +83,57 @@ async def nearby_stations(
             limit,
         )
     return [NearbyStationResponse(**dict(r)) for r in rows]
+
+
+@router.get("/stations/popular", response_model=list[FavouriteStationResponse])
+async def popular_stations(request: Request) -> list[FavouriteStationResponse]:
+    pool = _get_pool(request)
+    day_of_week, time_slot = _current_slot()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """
+            SELECT s.station_id, s.name, s.address, s.lat, s.lon, s.capacity,
+                   sa.avg_bikes, sa.avg_ebikes, sa.sample_count
+            FROM stations s
+            LEFT JOIN station_availability sa
+                ON sa.station_id = s.station_id
+                AND sa.day_of_week = $2
+                AND sa.time_slot = $3
+            WHERE s.station_id = ANY($1)
+              AND s.is_active = TRUE
+            ORDER BY array_position($1, s.station_id)
+            """,
+            POPULAR_STATION_IDS,
+            day_of_week,
+            time_slot,
+        )
+    results: list[FavouriteStationResponse] = []
+    for r in rows:
+        avg_bikes = r["avg_bikes"]
+        avg_ebikes = r["avg_ebikes"]
+        sample_count = r["sample_count"]
+        if (
+            avg_bikes is not None
+            and avg_ebikes is not None
+            and sample_count is not None
+        ):
+            label = _reliability_label(avg_bikes + avg_ebikes, sample_count)
+        else:
+            label = None
+        results.append(
+            FavouriteStationResponse(
+                station_id=r["station_id"],
+                name=r["name"],
+                address=r["address"],
+                lat=r["lat"],
+                lon=r["lon"],
+                capacity=r["capacity"],
+                avg_bikes=avg_bikes,
+                avg_ebikes=avg_ebikes,
+                reliability_label=label,
+            )
+        )
+    return results
 
 
 @router.get("/stations/{station_id}", response_model=StationDetailResponse)

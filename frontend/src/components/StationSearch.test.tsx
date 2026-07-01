@@ -27,25 +27,25 @@ function renderSearch(stations = TEST_STATIONS) {
 
 test('StationSearch typing a station name shows matching results', async () => {
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Brama')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Brama')
   expect(screen.getByText('Brama Wyżynna')).toBeInTheDocument()
 })
 
 test('StationSearch typing a station ID shows matching results', async () => {
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), '4076')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), '4076')
   expect(screen.getByText('Brama Wyżynna')).toBeInTheDocument()
 })
 
 test('StationSearch typing an address substring shows matching results', async () => {
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Jagiellońskie')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Jagiellońskie')
   expect(screen.getByText('Brama Wyżynna')).toBeInTheDocument()
 })
 
 test('StationSearch results are links to /stations/{station_id}', async () => {
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Brama')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Brama')
   const link = screen.getByRole('link', { name: /Brama Wyżynna/ })
   expect(link).toHaveAttribute('href', '/stations/4076')
 })
@@ -60,7 +60,7 @@ test('StationSearch shows max 10 local results', async () => {
     capacity: 10,
   }))
   renderSearch(manyStations)
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Test')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Test')
   const links = screen.getAllByRole('link')
   expect(links).toHaveLength(10)
 })
@@ -85,7 +85,7 @@ test('StationSearch no local matches with >= 3 chars triggers geocode fallback',
   ])
 
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Nieznana ulica')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Nieznana ulica')
 
   await waitFor(() => {
     expect(screen.getByText('Nearby Station')).toBeInTheDocument()
@@ -109,7 +109,7 @@ test('StationSearch nearby results show distance', async () => {
   ])
 
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Nieznana ulica')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Nieznana ulica')
 
   await waitFor(() => {
     expect(screen.getByText('250 m')).toBeInTheDocument()
@@ -120,7 +120,7 @@ test('StationSearch geocode error shows Polish error message', async () => {
   mockedGeocode.mockRejectedValue(new Error('Not found'))
 
   renderSearch()
-  await userEvent.type(screen.getByPlaceholderText(/Wpisz numer/), 'Nieznana ulica')
+  await userEvent.type(screen.getByPlaceholderText(/Wpisz nazwę/), 'Nieznana ulica')
 
   await waitFor(() => {
     expect(screen.getByText(/Nie znaleziono adresu/)).toBeInTheDocument()

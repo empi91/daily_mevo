@@ -1,4 +1,5 @@
 import { apiFetch } from './client'
+import type { FavouriteStation } from './favourites'
 
 export interface StationResponse {
   station_id: string
@@ -42,6 +43,10 @@ export interface GeocodeResponse {
   lat: number
   lon: number
   display_name: string
+}
+
+export function fetchPopularStations(): Promise<FavouriteStation[]> {
+  return apiFetch<FavouriteStation[]>('/stations/popular')
 }
 
 export function fetchStations(): Promise<StationResponse[]> {

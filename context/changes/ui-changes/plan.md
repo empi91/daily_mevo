@@ -451,33 +451,33 @@ Complete redesign of the day-detail slot tiles to variant 2a (vertical cards, nu
 
 #### Automated
 
-- [x] 1.1 TypeScript compiles
-- [x] 1.2 Linting passes
-- [x] 1.3 Existing tests pass
+- [x] 1.1 TypeScript compiles — 1cd33b0
+- [x] 1.2 Linting passes — 1cd33b0
+- [x] 1.3 Existing tests pass — 1cd33b0
 
 #### Manual
 
-- [ ] 1.4 Nunito/DM Mono fonts load correctly
-- [ ] 1.5 Dark/light toggle works in header
-- [ ] 1.6 OS theme detection works with live updates
-- [ ] 1.7 All palette tokens apply correctly in both themes
+- [x] 1.4 Nunito/DM Mono fonts load correctly — 1cd33b0
+- [x] 1.5 Dark/light toggle works in header — 1cd33b0
+- [x] 1.6 OS theme detection works with live updates — 1cd33b0
+- [x] 1.7 All palette tokens apply correctly in both themes — 1cd33b0
 
 ### Phase 2: Home Page
 
 #### Automated
 
-- [ ] 2.1 Backend tests pass
-- [ ] 2.2 TypeScript compiles
-- [ ] 2.3 Frontend tests pass
-- [ ] 2.4 Backend linting and type checks pass
+- [x] 2.1 Backend tests pass
+- [x] 2.2 TypeScript compiles
+- [x] 2.3 Frontend tests pass
+- [x] 2.4 Backend linting and type checks pass
 
 #### Manual
 
-- [ ] 2.5 Popular stations show availability data
-- [ ] 2.6 Station cards match design spec (both popular and favourite)
-- [ ] 2.7 Heart icon toggles favourite state
-- [ ] 2.8 Hero section and search bar match design baseline
-- [ ] 2.9 Cards correct in both dark/light modes
+- [x] 2.5 Popular stations show availability data
+- [x] 2.6 Station cards match design spec (both popular and favourite)
+- [x] 2.7 Heart icon toggles favourite state
+- [x] 2.8 Hero section and search bar match design baseline
+- [x] 2.9 Cards correct in both dark/light modes
 
 ### Phase 3: Station Detail — Header, Heatmap & Tabs
 
