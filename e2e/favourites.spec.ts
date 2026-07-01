@@ -34,7 +34,7 @@ test.describe('favourites lifecycle', () => {
     const email = uniqueEmail('toggle-visible')
     await registerAndLogin(page, email)
 
-    await navigateToFirstStation(page)
+    const stationName = await navigateToFirstStation(page)
 
     await expect(page.getByRole('button', { name: `Dodaj ${stationName} do ulubionych` })).toBeVisible()
 
