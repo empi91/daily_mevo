@@ -74,7 +74,7 @@ export default function StationDetailPage() {
       <div className="mt-4 mb-6">
         <div className="flex items-center gap-3">
           <h1 className="text-[26px] font-extrabold text-text">{station.name}</h1>
-          <FavouriteToggleButton stationId={station.station_id} />
+          <FavouriteToggleButton stationId={station.station_id} stationName={station.name} />
         </div>
         <p className="mt-2 text-sm font-semibold text-muted">
           ID: {station.station_id}

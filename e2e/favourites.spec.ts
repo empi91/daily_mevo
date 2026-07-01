@@ -36,7 +36,7 @@ test.describe('favourites lifecycle', () => {
 
     await navigateToFirstStation(page)
 
-    await expect(page.getByRole('button', { name: 'Dodaj do ulubionych' })).toBeVisible()
+    await expect(page.getByRole('button', { name: `Dodaj ${stationName} do ulubionych` })).toBeVisible()
 
     await page.getByRole('button', { name: 'Wyloguj' }).click()
   })
@@ -49,8 +49,8 @@ test.describe('favourites lifecycle', () => {
     await firstStationLink.click()
     await expect(page).toHaveURL(/\/stations\//)
 
-    await expect(page.getByRole('button', { name: 'Dodaj do ulubionych' })).not.toBeVisible()
-    await expect(page.getByRole('button', { name: 'Usuń z ulubionych' })).not.toBeVisible()
+    await expect(page.getByRole('button', { name: /Dodaj.*do ulubionych/ })).not.toBeVisible()
+    await expect(page.getByRole('button', { name: /Usuń.*z ulubionych/ })).not.toBeVisible()
   })
 
   test('adding a favourite shows station on homepage', async ({ page }) => {
@@ -59,8 +59,8 @@ test.describe('favourites lifecycle', () => {
 
     const stationName = await navigateToFirstStation(page)
 
-    await page.getByRole('button', { name: 'Dodaj do ulubionych' }).click()
-    await expect(page.getByRole('button', { name: 'Usuń z ulubionych' })).toBeVisible()
+    await page.getByRole('button', { name: `Dodaj ${stationName} do ulubionych` }).click()
+    await expect(page.getByRole('button', { name: `Usuń ${stationName} z ulubionych` })).toBeVisible()
 
     await page.goto('/')
 
@@ -75,8 +75,8 @@ test.describe('favourites lifecycle', () => {
     await registerAndLogin(page, email)
 
     const stationName = await navigateToFirstStation(page)
-    await page.getByRole('button', { name: 'Dodaj do ulubionych' }).click()
-    await expect(page.getByRole('button', { name: 'Usuń z ulubionych' })).toBeVisible()
+    await page.getByRole('button', { name: `Dodaj ${stationName} do ulubionych` }).click()
+    await expect(page.getByRole('button', { name: `Usuń ${stationName} z ulubionych` })).toBeVisible()
 
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'Twoje ulubione stacje' })).toBeVisible()
@@ -94,8 +94,8 @@ test.describe('favourites lifecycle', () => {
     await registerAndLogin(page, email)
 
     const stationName = await navigateToFirstStation(page)
-    await page.getByRole('button', { name: 'Dodaj do ulubionych' }).click()
-    await expect(page.getByRole('button', { name: 'Usuń z ulubionych' })).toBeVisible()
+    await page.getByRole('button', { name: `Dodaj ${stationName} do ulubionych` }).click()
+    await expect(page.getByRole('button', { name: `Usuń ${stationName} z ulubionych` })).toBeVisible()
 
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'Twoje ulubione stacje' })).toBeVisible()

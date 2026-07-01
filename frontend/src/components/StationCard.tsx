@@ -31,7 +31,7 @@ export default function StationCard({ station, showHeart }: StationCardProps) {
           </span>
           {showHeart && (
             <span onClick={e => e.preventDefault()}>
-              <FavouriteToggleButton stationId={station.station_id} />
+              <FavouriteToggleButton stationId={station.station_id} stationName={station.name} />
             </span>
           )}
         </div>

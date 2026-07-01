@@ -3,9 +3,10 @@ import { useFavourites } from '../hooks/useFavourites'
 
 interface Props {
   stationId: string
+  stationName?: string
 }
 
-export default function FavouriteToggleButton({ stationId }: Props) {
+export default function FavouriteToggleButton({ stationId, stationName }: Props) {
   const { isAuthenticated } = useAuth()
   const { isFavourite, addMutation, removeMutation } = useFavourites()
 
@@ -29,7 +30,7 @@ export default function FavouriteToggleButton({ stationId }: Props) {
         type="button"
         onClick={handleClick}
         disabled={pending}
-        aria-label={favourited ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+        aria-label={favourited ? `Usuń${stationName ? ` ${stationName}` : ''} z ulubionych` : `Dodaj${stationName ? ` ${stationName}` : ''} do ulubionych`}
         className={`text-2xl transition-colors ${pending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${favourited ? 'text-accent hover:opacity-80' : 'text-muted hover:text-accent'}`}
       >
         {favourited ? '♥' : '♡'}
