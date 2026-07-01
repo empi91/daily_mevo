@@ -18,11 +18,11 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-12">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Zaloguj się</h1>
+      <h1 className="text-2xl font-bold text-text mb-6">Zaloguj się</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-muted mb-1">
             Email
           </label>
           <input
@@ -31,12 +31,12 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 bg-surface border border-border rounded-md text-text focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-muted mb-1">
             Hasło
           </label>
           <input
@@ -45,7 +45,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 bg-surface border border-border rounded-md text-text focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
           />
         </div>
 
@@ -60,15 +60,15 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loginMutation.isPending}
-          className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="w-full py-2 px-4 bg-accent text-accent-text font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition-colors"
         >
           {loginMutation.isPending ? 'Logowanie...' : 'Zaloguj się'}
         </button>
       </form>
 
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="mt-4 text-sm text-muted">
         Nie masz konta?{' '}
-        <Link to="/register" className="text-blue-600 hover:underline">
+        <Link to="/register" className="text-accent hover:underline">
           Zarejestruj się
         </Link>
       </p>

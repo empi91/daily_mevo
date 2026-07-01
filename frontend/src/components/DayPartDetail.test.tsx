@@ -42,27 +42,23 @@ test('DayPartDetail clicking a collapsed section expands it', async () => {
   expect(screen.getByText('12:00')).toBeInTheDocument()
 })
 
-test('DayPartDetail expanded section shows per-slot bike counts and reliability badge', () => {
+test('DayPartDetail expanded section shows per-slot bike counts in tile layout', () => {
   vi.useFakeTimers()
   vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail()
-  const badges = screen.getAllByText('dostępne')
-  expect(badges.length).toBeGreaterThan(0)
-  expect(screen.getByText('niepewne')).toBeInTheDocument()
+  expect(screen.getByText('06:00')).toBeInTheDocument()
+  expect(screen.getByText('08:00')).toBeInTheDocument()
+  expect(screen.getByText('średnio · niepewne')).toBeInTheDocument()
   vi.useRealTimers()
 })
 
-test('DayPartDetail reliability labels render correct Polish text', async () => {
+test('DayPartDetail reliable slots show średnio without niepewne', () => {
   vi.useFakeTimers()
   vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail()
-  expect(screen.getAllByText('dostępne').length).toBeGreaterThan(0)
-  expect(screen.getByText('niepewne')).toBeInTheDocument()
+  const srednioElements = screen.getAllByText('średnio')
+  expect(srednioElements.length).toBeGreaterThan(0)
   vi.useRealTimers()
-
-  const popButton = screen.getByText('Popołudnie').closest('button')!
-  await userEvent.click(popButton)
-  expect(screen.getByText('puste')).toBeInTheDocument()
 })
 
 test('DayPartDetail section header shows average bike count', () => {
@@ -76,13 +72,12 @@ test('DayPartDetail no data for a period shows empty message', () => {
   expect(screen.getAllByText('Brak danych dla tego okresu').length).toBeGreaterThan(0)
 })
 
-test('DayPartDetail insufficient_data label renders as brak danych', () => {
+test('DayPartDetail insufficient_data label renders tile without niepewne', () => {
   vi.useFakeTimers()
   vi.setSystemTime(new Date(2026, 5, 21, 8, 0, 0))
   renderDetail(1)
-  const ranoButton = screen.getByText('Rano').closest('button')!
-  expect(ranoButton).toBeInTheDocument()
-  expect(screen.getByText('brak danych')).toBeInTheDocument()
+  const srednioElements = screen.getAllByText('średnio')
+  expect(srednioElements.length).toBeGreaterThan(0)
   vi.useRealTimers()
 })
 

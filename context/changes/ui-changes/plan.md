@@ -483,32 +483,32 @@ Complete redesign of the day-detail slot tiles to variant 2a (vertical cards, nu
 
 #### Automated
 
-- [x] 3.1 TypeScript compiles
-- [x] 3.2 Frontend tests pass
-- [x] 3.3 Linting passes
+- [x] 3.1 TypeScript compiles — 7370efa
+- [x] 3.2 Frontend tests pass — 7370efa
+- [x] 3.3 Linting passes — 7370efa
 
 #### Manual
 
-- [x] 3.4 Heatmap uses 5-tier hex colors with correct radii and gaps
-- [x] 3.5 Hour ticks show every 3 hours, centered, DM Mono
-- [x] 3.6 Legend shows 5 swatches
-- [x] 3.7 Day-of-week tabs are accent pill chips
-- [x] 3.8 Station header typography and sub-line match spec
-- [x] 3.9 All elements correct in both themes
+- [x] 3.4 Heatmap uses 5-tier hex colors with correct radii and gaps — 7370efa
+- [x] 3.5 Hour ticks show every 3 hours, centered, DM Mono — 7370efa
+- [x] 3.6 Legend shows 5 swatches — 7370efa
+- [x] 3.7 Day-of-week tabs are accent pill chips — 7370efa
+- [x] 3.8 Station header typography and sub-line match spec — 7370efa
+- [x] 3.9 All elements correct in both themes — 7370efa
 
 ### Phase 4: Slot Tiles & Auth Pages
 
 #### Automated
 
-- [ ] 4.1 TypeScript compiles
-- [ ] 4.2 Frontend tests pass
-- [ ] 4.3 Linting passes
+- [x] 4.1 TypeScript compiles
+- [x] 4.2 Frontend tests pass
+- [x] 4.3 Linting passes
 
 #### Manual
 
-- [ ] 4.4 Slot tiles render as 6-column vertical cards with softened tier backgrounds
-- [ ] 4.5 Numbers-forward layout with correct typography sizes
-- [ ] 4.6 Reliability "niepewne" appears on low-confidence slots
-- [ ] 4.7 Login/Register pages match warm palette
-- [ ] 4.8 Polish pluralization correct across all states
-- [ ] 4.9 All elements correct in both dark/light modes
+- [x] 4.4 Slot tiles render as 6-column vertical cards with softened tier backgrounds
+- [x] 4.5 Numbers-forward layout with correct typography sizes
+- [x] 4.6 Reliability "niepewne" appears on low-confidence slots
+- [x] 4.7 Login/Register pages match warm palette
+- [x] 4.8 Polish pluralization correct across all states
+- [x] 4.9 All elements correct in both dark/light modes

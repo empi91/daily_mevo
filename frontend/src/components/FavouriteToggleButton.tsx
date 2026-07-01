@@ -30,7 +30,7 @@ export default function FavouriteToggleButton({ stationId }: Props) {
         onClick={handleClick}
         disabled={pending}
         aria-label={favourited ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
-        className={`text-2xl transition-colors ${pending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${favourited ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-400'}`}
+        className={`text-2xl transition-colors ${pending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${favourited ? 'text-accent hover:opacity-80' : 'text-muted hover:text-accent'}`}
       >
         {favourited ? '♥' : '♡'}
       </button>
