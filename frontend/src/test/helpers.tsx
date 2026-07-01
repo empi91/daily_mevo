@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import ThemeProvider from '../hooks/ThemeProvider'
 import type { useAuth } from '../hooks/useAuth'
 
 export function createTestQueryClient() {
@@ -52,7 +53,9 @@ export function renderWithProviders(
 ) {
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
+      </ThemeProvider>
     </QueryClientProvider>,
   )
 }

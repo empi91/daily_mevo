@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+:root {
+  --color-bg: #fff8f1;
+  --color-surface: #ffffff;
+  --color-text: #3a2a20;
+  --color-muted: #8a7263;
+  --color-border: #f0e0d2;
+  --color-accent: #ef7a52;
+  --color-accent-soft: #ffe7da;
+  --color-accent-text: #ffffff;
+
+  --tier-0: #dc4a4a;
+  --tier-1: #e8924a;
+  --tier-2: #e8c44a;
+  --tier-3: #9fcf5a;
+  --tier-4: #4caf6e;
+
+  --tier-0-soft: #e08a83;
+  --tier-1-soft: #ecb083;
+  --tier-2-soft: #eed897;
+  --tier-3-soft: #c3dc9b;
+  --tier-4-soft: #93c9a6;
+}
+
+.dark {
+  --color-bg: #241a14;
+  --color-surface: #2f2218;
+  --color-text: #fbeee5;
+  --color-muted: #c2a795;
+  --color-border: #4a392c;
+  --color-accent: #ff8f66;
+  --color-accent-soft: #3c2a1e;
+  --color-accent-text: #241a14;
+}
+
+@theme {
+  --font-sans: 'Nunito', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-text: var(--color-accent-text);
+}
