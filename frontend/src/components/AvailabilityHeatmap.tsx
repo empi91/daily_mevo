@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { AvailabilitySlot } from '../api/stations'
 import { bikesLabel, samplesLabel } from '../polish'
 
@@ -13,14 +14,16 @@ function slotIndex(timeSlot: string): number | null {
   return (h - START_HOUR) * SLOTS_PER_HOUR + Math.floor(m / 15)
 }
 
-function cellColor(total: number, sampleCount: number): string {
-  if (sampleCount < 1) return 'bg-gray-200'
-  if (total <= 1) return 'bg-red-500'
-  if (total <= 3) return 'bg-orange-400'
-  if (total <= 6) return 'bg-yellow-400'
-  if (total <= 9) return 'bg-lime-400'
-  return 'bg-green-500'
+function cellColorStyle(total: number, sampleCount: number): CSSProperties {
+  if (sampleCount < 1) return { backgroundColor: 'var(--color-border)' }
+  if (total <= 1) return { backgroundColor: 'var(--tier-0)' }
+  if (total <= 3) return { backgroundColor: 'var(--tier-1)' }
+  if (total <= 6) return { backgroundColor: 'var(--tier-2)' }
+  if (total <= 9) return { backgroundColor: 'var(--tier-3)' }
+  return { backgroundColor: 'var(--tier-4)' }
 }
+
+const TICK_HOURS = [5, 8, 11, 14, 17, 20]
 
 function cellTitle(slot: AvailabilitySlot | undefined, time: string): string {
   if (!slot || slot.sample_count < 1) {
@@ -48,22 +51,25 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
     }
   }
 
-  const hourLabels = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i)
-
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[600px]">
-        {/* Hour labels */}
-        <div className="flex ml-10 mb-1">
-          {hourLabels.map((h) => (
-            <div
-              key={h}
-              className="text-xs text-gray-500"
-              style={{ width: `${(100 / TOTAL_SLOTS) * SLOTS_PER_HOUR}%` }}
-            >
-              {h}:00
-            </div>
-          ))}
+        {/* Hour tick labels — every 3 hours */}
+        <div className="relative ml-11 mb-1 h-4">
+          {TICK_HOURS.map((h) => {
+            const slotOffset = (h - START_HOUR) * SLOTS_PER_HOUR
+            const widthPct = (SLOTS_PER_HOUR * 3 / TOTAL_SLOTS) * 100
+            const leftPct = (slotOffset / TOTAL_SLOTS) * 100
+            return (
+              <div
+                key={h}
+                className="absolute text-xs font-mono text-muted text-center"
+                style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
+              >
+                {h}:00
+              </div>
+            )
+          })}
         </div>
 
         {/* Grid rows */}
@@ -71,14 +77,14 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
           <div
             key={dayIdx}
             className={`flex items-center cursor-pointer rounded transition-colors ${
-              selectedDay === dayIdx ? 'bg-blue-50 ring-1 ring-blue-300' : 'hover:bg-gray-50'
+              selectedDay === dayIdx ? 'bg-accent-soft ring-1 ring-accent' : 'hover:bg-surface'
             }`}
             onClick={() => onSelectDay(dayIdx)}
           >
-            <div className="w-10 text-xs font-medium text-gray-600 text-right pr-2 shrink-0">
+            <div className="w-11 text-xs font-bold text-muted text-right pr-2 shrink-0">
               {DAY_LABELS[dayIdx]}
             </div>
-            <div className="flex flex-1 gap-px py-0.5">
+            <div className="flex flex-1 gap-[3px] py-0.5">
               {row.map((slot, slotIdx) => {
                 const hour = START_HOUR + Math.floor(slotIdx / SLOTS_PER_HOUR)
                 const minute = (slotIdx % SLOTS_PER_HOUR) * 15
@@ -86,7 +92,8 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
                 return (
                   <div
                     key={slotIdx}
-                    className={`h-6 flex-1 rounded-sm ${cellColor(Math.round((slot?.avg_bikes ?? 0) + (slot?.avg_ebikes ?? 0)), slot?.sample_count ?? 0)}`}
+                    className="h-[26px] flex-1 rounded-[5px]"
+                    style={cellColorStyle(Math.round((slot?.avg_bikes ?? 0) + (slot?.avg_ebikes ?? 0)), slot?.sample_count ?? 0)}
                     title={cellTitle(slot, timeStr)}
                   />
                 )
@@ -95,25 +102,22 @@ export default function AvailabilityHeatmap({ availability, selectedDay, onSelec
           </div>
         ))}
 
-        {/* Legend */}
-        <div className="flex items-center gap-4 mt-3 ml-10 text-xs text-gray-600">
+        {/* Legend — 5 tiers */}
+        <div className="flex flex-wrap items-center gap-4 mt-3 ml-11 text-xs text-muted">
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≥10 rowerów łącznie
+            <span className="inline-block w-3 h-3 rounded-[5px]" style={{ backgroundColor: 'var(--tier-4)' }} /> ≥10 rowerów łącznie
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-lime-400" /> 7–9 rowerów łącznie
+            <span className="inline-block w-3 h-3 rounded-[5px]" style={{ backgroundColor: 'var(--tier-3)' }} /> 7–9
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-yellow-400" /> 4–6 rowerów łącznie
+            <span className="inline-block w-3 h-3 rounded-[5px]" style={{ backgroundColor: 'var(--tier-2)' }} /> 4–6
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-orange-400" /> 2–3 rowery łącznie
+            <span className="inline-block w-3 h-3 rounded-[5px]" style={{ backgroundColor: 'var(--tier-1)' }} /> 2–3
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> 0–1 rower łącznie
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm bg-gray-200" /> brak danych
+            <span className="inline-block w-3 h-3 rounded-[5px]" style={{ backgroundColor: 'var(--tier-0)' }} /> 0–1
           </span>
         </div>
       </div>

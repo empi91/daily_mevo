@@ -466,35 +466,35 @@ Complete redesign of the day-detail slot tiles to variant 2a (vertical cards, nu
 
 #### Automated
 
-- [x] 2.1 Backend tests pass
-- [x] 2.2 TypeScript compiles
-- [x] 2.3 Frontend tests pass
-- [x] 2.4 Backend linting and type checks pass
+- [x] 2.1 Backend tests pass — c7e168b
+- [x] 2.2 TypeScript compiles — c7e168b
+- [x] 2.3 Frontend tests pass — c7e168b
+- [x] 2.4 Backend linting and type checks pass — c7e168b
 
 #### Manual
 
-- [x] 2.5 Popular stations show availability data
-- [x] 2.6 Station cards match design spec (both popular and favourite)
-- [x] 2.7 Heart icon toggles favourite state
-- [x] 2.8 Hero section and search bar match design baseline
-- [x] 2.9 Cards correct in both dark/light modes
+- [x] 2.5 Popular stations show availability data — c7e168b
+- [x] 2.6 Station cards match design spec (both popular and favourite) — c7e168b
+- [x] 2.7 Heart icon toggles favourite state — c7e168b
+- [x] 2.8 Hero section and search bar match design baseline — c7e168b
+- [x] 2.9 Cards correct in both dark/light modes — c7e168b
 
 ### Phase 3: Station Detail — Header, Heatmap & Tabs
 
 #### Automated
 
-- [ ] 3.1 TypeScript compiles
-- [ ] 3.2 Frontend tests pass
-- [ ] 3.3 Linting passes
+- [x] 3.1 TypeScript compiles
+- [x] 3.2 Frontend tests pass
+- [x] 3.3 Linting passes
 
 #### Manual
 
-- [ ] 3.4 Heatmap uses 5-tier hex colors with correct radii and gaps
-- [ ] 3.5 Hour ticks show every 3 hours, centered, DM Mono
-- [ ] 3.6 Legend shows 5 swatches
-- [ ] 3.7 Day-of-week tabs are accent pill chips
-- [ ] 3.8 Station header typography and sub-line match spec
-- [ ] 3.9 All elements correct in both themes
+- [x] 3.4 Heatmap uses 5-tier hex colors with correct radii and gaps
+- [x] 3.5 Hour ticks show every 3 hours, centered, DM Mono
+- [x] 3.6 Legend shows 5 swatches
+- [x] 3.7 Day-of-week tabs are accent pill chips
+- [x] 3.8 Station header typography and sub-line match spec
+- [x] 3.9 All elements correct in both themes
 
 ### Phase 4: Slot Tiles & Auth Pages
 

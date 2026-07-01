@@ -9,10 +9,10 @@ test('DayOfWeekTabs renders 7 buttons with Polish day labels', () => {
   }
 })
 
-test('DayOfWeekTabs selected day button has bg-blue-600', () => {
+test('DayOfWeekTabs selected day button has bg-accent', () => {
   render(<DayOfWeekTabs selectedDay={2} onSelectDay={vi.fn()} />)
   const selected = screen.getByRole('button', { name: 'Śr' })
-  expect(selected.className).toContain('bg-blue-600')
+  expect(selected.className).toContain('bg-accent')
 })
 
 test('DayOfWeekTabs clicking a tab calls onSelectDay with correct index', async () => {

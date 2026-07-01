@@ -22,42 +22,42 @@ test('AvailabilityHeatmap renders 7 day rows', () => {
   }
 })
 
-test('AvailabilityHeatmap cells with 7-9 total have bg-lime-400', () => {
+test('AvailabilityHeatmap cells with 7-9 total use tier-3 color', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/06:00 — śr\. 8 rowerów/)
-  expect(cell.className).toContain('bg-lime-400')
+  expect(cell.style.backgroundColor).toBe('var(--tier-3)')
 })
 
-test('AvailabilityHeatmap cells with 2-3 total have bg-orange-400', () => {
+test('AvailabilityHeatmap cells with 2-3 total use tier-1 color', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/08:00 — śr\. 3 rowery/)
-  expect(cell.className).toContain('bg-orange-400')
+  expect(cell.style.backgroundColor).toBe('var(--tier-1)')
 })
 
-test('AvailabilityHeatmap cells with 0-1 total have bg-red-500', () => {
+test('AvailabilityHeatmap cells with 0-1 total use tier-0 color', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/12:00 — śr\. 1 rower/)
-  expect(cell.className).toContain('bg-red-500')
+  expect(cell.style.backgroundColor).toBe('var(--tier-0)')
 })
 
-test('AvailabilityHeatmap cells with 4-6 total have bg-yellow-400', () => {
+test('AvailabilityHeatmap cells with 4-6 total use tier-2 color', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/09:00 — śr\. 5 rowerów/)
-  expect(cell.className).toContain('bg-yellow-400')
+  expect(cell.style.backgroundColor).toBe('var(--tier-2)')
 })
 
-test('AvailabilityHeatmap cells with 10+ total have bg-green-500', () => {
+test('AvailabilityHeatmap cells with 10+ total use tier-4 color', () => {
   renderHeatmap()
   const cell = screen.getByTitle(/14:00 — śr\. 12 rowerów/)
-  expect(cell.className).toContain('bg-green-500')
+  expect(cell.style.backgroundColor).toBe('var(--tier-4)')
 })
 
-test('AvailabilityHeatmap cells with no data have bg-gray-200', () => {
+test('AvailabilityHeatmap cells with no data use border color', () => {
   renderHeatmap()
   const cells = screen.getAllByTitle('05:00 — brak danych')
   expect(cells.length).toBe(7)
   for (const cell of cells) {
-    expect(cell.className).toContain('bg-gray-200')
+    expect(cell.style.backgroundColor).toBe('var(--color-border)')
   }
 })
 
@@ -66,7 +66,7 @@ test('AvailabilityHeatmap selected day row has ring classes', () => {
   const dayLabel = screen.getByText('Śr')
   const row = dayLabel.closest('.cursor-pointer')!
   expect(row.className).toContain('ring-1')
-  expect(row.className).toContain('ring-blue-300')
+  expect(row.className).toContain('ring-accent')
 })
 
 test('AvailabilityHeatmap clicking a day row calls onSelectDay', async () => {
@@ -76,28 +76,27 @@ test('AvailabilityHeatmap clicking a day row calls onSelectDay', async () => {
   expect(onSelectDay).toHaveBeenCalledWith(1)
 })
 
-test('AvailabilityHeatmap renders hour labels from 5:00 to 22:00', () => {
+test('AvailabilityHeatmap renders hour tick labels every 3 hours', () => {
   renderHeatmap()
-  expect(screen.getByText('5:00')).toBeInTheDocument()
-  expect(screen.getByText('12:00')).toBeInTheDocument()
-  expect(screen.getByText('22:00')).toBeInTheDocument()
+  for (const h of [5, 8, 11, 14, 17, 20]) {
+    expect(screen.getByText(`${h}:00`)).toBeInTheDocument()
+  }
 })
 
 test('AvailabilityHeatmap legend text is present', () => {
   renderHeatmap()
   expect(screen.getByText(/≥10 rowerów łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/7–9 rowerów łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/4–6 rowerów łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/2–3 rowery łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/0–1 rower łącznie/)).toBeInTheDocument()
-  expect(screen.getByText(/brak danych/)).toBeInTheDocument()
+  expect(screen.getByText(/7–9/)).toBeInTheDocument()
+  expect(screen.getByText(/4–6/)).toBeInTheDocument()
+  expect(screen.getByText(/2–3/)).toBeInTheDocument()
+  expect(screen.getByText(/0–1/)).toBeInTheDocument()
 })
 
-test('AvailabilityHeatmap with empty availability renders all gray cells', () => {
+test('AvailabilityHeatmap with empty availability renders all border-colored cells', () => {
   renderHeatmap({ availability: [] })
   const noCells = screen.getAllByTitle(/brak danych/)
   expect(noCells.length).toBeGreaterThan(0)
   for (const cell of noCells) {
-    expect(cell.className).toContain('bg-gray-200')
+    expect(cell.style.backgroundColor).toBe('var(--color-border)')
   }
 })

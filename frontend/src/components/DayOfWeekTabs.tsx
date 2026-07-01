@@ -12,10 +12,10 @@ export default function DayOfWeekTabs({ selectedDay, onSelectDay }: Props) {
         <button
           key={i}
           onClick={() => onSelectDay(i)}
-          className={`px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+          className={`px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
             selectedDay === i
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-accent text-accent-text'
+              : 'bg-accent-soft text-muted hover:bg-accent/20'
           }`}
         >
           {label}
