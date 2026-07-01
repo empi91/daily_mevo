@@ -500,15 +500,15 @@ Complete redesign of the day-detail slot tiles to variant 2a (vertical cards, nu
 
 #### Automated
 
-- [x] 4.1 TypeScript compiles
-- [x] 4.2 Frontend tests pass
-- [x] 4.3 Linting passes
+- [x] 4.1 TypeScript compiles — 462ee65
+- [x] 4.2 Frontend tests pass — 462ee65
+- [x] 4.3 Linting passes — 462ee65
 
 #### Manual
 
-- [x] 4.4 Slot tiles render as 6-column vertical cards with softened tier backgrounds
-- [x] 4.5 Numbers-forward layout with correct typography sizes
-- [x] 4.6 Reliability "niepewne" appears on low-confidence slots
-- [x] 4.7 Login/Register pages match warm palette
-- [x] 4.8 Polish pluralization correct across all states
-- [x] 4.9 All elements correct in both dark/light modes
+- [x] 4.4 Slot tiles render as 6-column vertical cards with softened tier backgrounds — 462ee65
+- [x] 4.5 Numbers-forward layout with correct typography sizes — 462ee65
+- [x] 4.6 Reliability "niepewne" appears on low-confidence slots — 462ee65
+- [x] 4.7 Login/Register pages match warm palette — 462ee65
+- [x] 4.8 Polish pluralization correct across all states — 462ee65
+- [x] 4.9 All elements correct in both dark/light modes — 462ee65
