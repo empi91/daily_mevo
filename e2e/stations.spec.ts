@@ -5,7 +5,7 @@ test.describe('public station pages', () => {
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'MevoStats', level: 1 })).toBeVisible()
     await expect(
-      page.getByPlaceholder('Wpisz numer stacji, nazwę lub adres...'),
+      page.getByPlaceholder('Wpisz nazwę lub adres stacji'),
     ).toBeVisible()
   })
 

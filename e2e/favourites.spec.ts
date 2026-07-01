@@ -25,6 +25,7 @@ async function navigateToFirstStation(page: import('@playwright/test').Page) {
   const stationName = linkText!.match(/^[A-Z]{3}\d{3}/)![0]
   await firstStationLink.click()
   await expect(page).toHaveURL(/\/stations\//)
+  await expect(page.getByText('Wróć do wyszukiwania')).toBeVisible()
   return stationName
 }
 

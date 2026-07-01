@@ -36,7 +36,10 @@ test('DayPartDetail expands section matching current time of day', () => {
 })
 
 test('DayPartDetail clicking a collapsed section expands it', async () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 5, 21, 20, 0, 0))
   renderDetail()
+  vi.useRealTimers()
   const popButton = screen.getByText('Popołudnie').closest('button')!
   await userEvent.click(popButton)
   expect(screen.getByText('12:00')).toBeInTheDocument()
